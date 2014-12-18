@@ -3,8 +3,8 @@
 var path        = require('path');
 var url         = require('url');
 var express     = require('express');
+var React       = require('react');
 var browserify  = require('connect-browserify');
-var ReactAsync  = require('react-async');
 var nodejsx     = require('node-jsx').install();
 var App         = require('./client');
 
@@ -12,13 +12,10 @@ var development = process.env.NODE_ENV !== 'production';
 
 function renderApp(req, res, next) {
   var path = url.parse(req.url).pathname;
-  var app = App({path: path});
-  ReactAsync.renderComponentToStringWithAsyncState(app, function(err, markup) {
-    if (err) {
-      return next(err);
-    }
-    res.send('<!doctype html>\n' + markup);
-  });
+  var app = React.createElement(App, {path: path});
+  res.send("<!doctype html>\n" + 
+      React.renderToString(app)
+  );
 }
 
 var api = express()
