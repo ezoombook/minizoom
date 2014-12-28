@@ -42,12 +42,14 @@ var app = express();
 
 if (development) {
   app.get('/assets/bundle.js', function(req, res) {
+      res.writeHead(200, {"Content-Type":"text/javascript"});
       browserify('./client.jsx', {
         debug: true,
       })
       .transform(reactify)
       .bundle()
-      .pipe(res);
+      .pipe(res)
+      .end();
   });
 }
 
