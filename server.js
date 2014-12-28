@@ -4,17 +4,28 @@ var path        = require('path');
 var url         = require('url');
 var express     = require('express');
 var React       = require('react');
-var browserify  = require('connect-browserify');
+var browserify  = require('browserify');
+var reactify    = require('reactify');
 var nodejsx     = require('node-jsx').install();
-var App         = require('./client');
+var App         = require('./client.jsx');
+var data        = require('./data');
 
 var development = process.env.NODE_ENV !== 'production';
 
 function renderApp(req, res, next) {
   var path = url.parse(req.url).pathname;
-  var app = React.createElement(App, {path: path});
+  var initialState = {
+    path: path,
+    chapters: data.chapters(),
+    layers: data.layers(),
+    parts: data.parts()
+  }
+  var app = React.createElement(App, {
+      initialState: initialState
+  });
   res.send("<!doctype html>\n" + 
-      React.renderToString(app)
+      React.renderToString(app) +
+      "<script>initialState = "+JSON.stringify(initialState)+"</script>"
   );
 }
 
@@ -30,11 +41,14 @@ var api = express()
 var app = express();
 
 if (development) {
-  app.get('/assets/bundle.js',
-    browserify('./client', {
-      debug: true,
-      watch: true
-    }));
+  app.get('/assets/bundle.js', function(req, res) {
+      browserify('./client.jsx', {
+        debug: true,
+      })
+      .transform(reactify)
+      .bundle()
+      .pipe(res);
+  });
 }
 
 app
