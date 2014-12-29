@@ -16,7 +16,11 @@ function layers() {
 function parts() {
   return [
   {contents: "Chapter I",  key : 0, type: "heading", level:1},
+  {key:0.5},
   {contents: "Once upon a time...", key : 1},
+  {key:1.5},
+  {contents: "There was a little", key : 2},
+  {key:2.5}
   ];
 }
 

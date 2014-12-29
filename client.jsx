@@ -29,26 +29,88 @@ var Layers = React.createClass({
   }
 });
 
-var Parts = React.createClass({
-  render : function() {
-    return (
-      <Row>
-      {
-        this.props.parts.map(function(part){
-         return (
-           <Col key={part.key}>
-            <textarea
-                  className={part.type}
-                  value={part.contents}
-                  onChange={this.changed}
-                  />
+var EditorContents = React.createClass({
+  render: function(){
+    return <div></div>
+  }
+});
 
-              <Button bsSize="xsmall">Extra small button</Button>
-          </Col>)
-        }.bind(this))
+var Parts = React.createClass({
+  handleChange: function handleChange(evt) {
+      app.partsFromHTML(evt.target.value);
+  },
+
+  handleKeyDown: function(evt){
+    //Delete anchor if necessary
+    if (evt.keyCode === 8) { // Backspace
+      var sel = document.getSelection();
+      if (sel.focusOffset === sel.anchorOffset &&
+          sel.focusOffset === 0 &&
+          sel.anchorNode === sel.focusNode) {
+        //Nothing selected, caret at the beginning of a paragraph
+        var prev = sel.anchorNode.previousSibling ||
+                   sel.anchorNode.parentNode.previousSibling;
+        if (prev.className === "layer-anchor") {
+          //The anchor should be deleted
+          prev.parentNode.removeChild(prev);
+          evt.preventDefault();
+        }
       }
-      </Row>
-      );
+    }
+  },
+
+  handleKeyPress: function(evt){
+    //Add anchor when necessary
+    if (evt.which === 13) {//enter
+      var sel = document.getSelection();
+      if (sel.focusOffset === sel.anchorOffset &&
+          sel.anchorNode === sel.focusNode) {  
+        var node = sel.anchorNode;
+        if(node.nodeType === node.TEXT_NODE) node = node.parentElement;
+        if (node.nodeName === "P") {
+          var anchor = document.createElement("span");
+          if(node.previousElementSibling.nodeName === "P") {
+            var key1 = +node.dataset.key;
+            var key2 = +node.previousElementSibling.dataset.key;
+            if (key1 && key2) {
+              if (key1 === key2) {
+                var nextKey = +node.nextElementSibling.dataset.key;
+                if (nextKey > key1) {
+                  key1 = (nextKey + key1)/2;
+                  node.dataset.key = key1;
+                }
+              }
+              var newKey = (key1 + key2)/2;
+              anchor.dataset.key = newKey;
+              anchor.className = "layer-anchor";
+              anchor.id = "anchor" + newKey;
+              node.parentElement.insertBefore(anchor, node);
+            } 
+          }
+        }
+      }
+    }
+  },
+
+  render : function() {
+    return <div contentEditable
+                id="main-edition-div"
+                onKeyDown={this.handleKeyDown}
+                onKeyUp={this.handleKeyPress}>
+      {
+        this.props.parts.map(function(p){
+          if (!p.contents) {
+            return <span id={"anchor"+p.key}
+                         data-key={p.key}
+                          className="layer-anchor"></span>
+          } else if (p.level) {
+            return <h2 data-key={p.key}>{p.contents}</h2>
+          } else {
+            return <p data-key={p.key} >{p.contents}</p>
+          }
+        })
+      }
+          </div>;
   },
 
   changed: function(){

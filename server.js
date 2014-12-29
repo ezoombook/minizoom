@@ -48,8 +48,7 @@ if (development) {
       })
       .transform(reactify)
       .bundle()
-      .pipe(res)
-      .end();
+      .pipe(res);
   });
 }
 

@@ -9,5 +9,12 @@ body {
 }
 
 .App {
-  padding: 25px;
+  padding: 15px;
+}
+
+.layer-anchor {
+  width: 100%;
+  display: block;
+  background-color: #aaa;
+  height:1px;
 }
