@@ -6,7 +6,12 @@
   "browser": "./client.js",
   "browserify": {
     "transform": [
-      ["reactify", {"harmony": true}]
+      [
+        "reactify",
+        {
+          "harmony": true
+        }
+      ]
     ]
   },
   "dependencies": {
@@ -18,12 +23,13 @@
     "react-bootstrap": ">=0.13"
   },
   "devDependencies": {
-    "reactify": ">=0.17.1",
-    "envify": ">=1.2.0",
     "browserify": ">=3.44.2",
     "connect-browserify": ">=2.0.1",
-    "uglify-js": ">=2.4.13",
-    "supervisor": ">=0.6.0"
+    "envify": ">=1.2.0",
+    "reactify": ">=0.17.1",
+    "supervisor": ">=0.6.0",
+    "test": "^0.6.0",
+    "uglify-js": ">=2.4.13"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
