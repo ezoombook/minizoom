@@ -1,4 +1,44 @@
 /**
+ * @author Ophir LOJKINE
+ * Definition of Part and PartKeys methods
+ */
+
+/**
+ * @constructor
+ * Represents a part (a paragraph) of a layer.
+ * @argument key {PartKey|string}
+ * @argument heading {string} [heading=null] - The heading level if the part is a heading, or null
+ * @argument contents {string} [contents=""]
+ */
+function Part(key, heading, contents) {
+  this.key = (key instanceof PartKey) ? key : new PartKey(key);
+  if (heading != null) this.setHeading(heading);
+  if (contents != null) this.setContents(contents);
+} 
+/**
+ * @param {string} contents
+ */
+Part.prototype.setContents = function setContents(contents) {
+  this.contents = (contents || "").toString();
+}
+/**
+ * Add text contents to the part
+ * @param {string} text
+ */
+Part.prototype.addContents = function addContents(text) {
+  this.contents = (this.contents || "") + text;
+}
+/**
+ * Set the heading level of the part
+ * @method
+ */
+Part.prototype.setHeading = function (headingLevel) {
+  headingLevel = parseInt(headingLevel) || 1;
+  this.heading = headingLevel;
+}
+exports.Part = Part;
+
+/**
  * Represents the key (the identifier) of a part.
  * Keys allow to compare different layers and to order the parts
  * inside a layer.
@@ -8,7 +48,7 @@ function PartKey(number, uid) {
   this.number = +number || 0;
   this.uid    = uid     || Date.now();
 }
-
+exports.PartKey = PartKey; 
 /**
  * Parse a string to a PartKey
  * The string should be recognized by the regexp ^\d+\.\d+-.*
@@ -78,5 +118,3 @@ function formatNum(num) {
 
   return intpart  + '.' + floatpart;
 }
-
-module.exports = PartKey;

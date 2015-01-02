@@ -1,4 +1,4 @@
-var PartKey = require("./index.js");
+var PartKey = require("./index.js").PartKey;
 
 var strings = ["00000000.00000000-123", "1.1-hello", "2.2-world"];
 var orderedParts = strings.map(function(s){return PartKey.parse(s)});
