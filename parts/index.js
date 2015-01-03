@@ -71,7 +71,7 @@ PartKey.parse = function(str) {
  * @param {PartKey} key2
  * @return {PartKey}
  */
-PartKey.between = function (key1, key2) {
+PartKey.betweenTwo = function (key1, key2) {
   var newUid;
   if (key1.number === key2.number) {
     //Generate an uid that is between uid1 and uid2
@@ -88,6 +88,27 @@ PartKey.between = function (key1, key2) {
   var newNumber = (key1.number + key2.number) / 2;
   return new PartKey(newNumber, newUid);
 };
+
+/**
+ * Given two keys and a number of keys to generate,
+ * returns an sorted array of keys between the two keys.
+ * @param {PartKey} key1
+ * @param {PartKey} key2
+ * @param {number}  [number=2] number of keys to generate
+ * @return {PartKeys[]}
+ */
+PartKey.between = function (key1, key2, number) {
+  var intervals = (parseInt(number) || 1) + 1;
+  var keys = [];
+  var delta = (key2.number - key1.number)/intervals;
+  if (delta === 0) throw new Error("Not supported"); // TODO ?
+  var i = key1.number + delta;
+  for (var j=0; j<number; j++) {
+    keys.push(new PartKey(i));
+    i += delta;
+  }
+  return keys;
+}
 
 /**
  * Create a new PartKey such that key < newKey
