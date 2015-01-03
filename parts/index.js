@@ -134,7 +134,7 @@ function formatNum(num) {
   intpart = intpart.slice(-8);
 
   var floatpart = Math.floor((num - Math.floor(num)) * 1e8).toString(16);
-  while(floatpart.length < 8) floatpart = floatpart + '0';
+  while(floatpart.length < 8) floatpart = '0' + floatpart;
   floatpart = floatpart.slice(0, 8);
 
   return intpart  + '.' + floatpart;
