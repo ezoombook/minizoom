@@ -29,11 +29,12 @@ var test_data = [
 
 ];
 
-exports["test with sample input"] = function(assert, done) {
+exports["test html to parts parsing"] = function(assert, done) {
    test_data.forEach(function(data, dataNum){
       var partNum = 0;
-      var input = new stream.PassThrough();
-      var partsStream = input.pipe(new importer.HTMLToParts);
+      var partsStream = new importer.HTMLToParts;
+      partsStream.write(data.html);
+      partsStream.end();
 
       partsStream.on("data", function(part){
          var expected = data.parts[partNum];
@@ -53,13 +54,35 @@ exports["test with sample input"] = function(assert, done) {
       partsStream.on("end", function(){
         assert.equal(partNum, data.parts.length,
            data.name + ": Correct number of parts");
-        if(dataNum === test_data.length) done();
+        if(dataNum === test_data.length-1) done();
       });
-
-      input.write(data.html);
-      input.end();
    });
 };
+
+function testKeyTranformer(keyTransformer) {
+   return (function(assert, done) {
+      test_data.forEach(function(data, dataNum){
+         var partsStream = new importer.HTMLToParts;
+         var curKey = new ezpart.PartKey(0);
+         var orderedStream = new keyTransformer({
+            firstKey: curKey
+         });
+         partsStream.pipe(orderedStream);
+         partsStream.write(data.html);
+         partsStream.end();
+
+         orderedStream.on("data", function(part){
+            assert.ok(part.key > curKey, part.key + " > " + curKey);
+            curKey = part.key;
+         });
+
+         if(dataNum === test_data.length-1) partsStream.on("end", done);
+      });
+   });
+}
+
+exports["test keys correction"] = testKeyTranformer(importer.KeyCorrector);
+exports["test keys generation"] = testKeyTranformer(importer.KeyGenerator);
 
 if (module === require.main) {
    require("test").run(exports);

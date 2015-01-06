@@ -2,7 +2,9 @@ var sax = require("sax");
 var stream = require("stream");
 var util = require('util');
 var Transform = require('stream').Transform;
-var Part = require("../parts").Part;
+var parts = require("../parts"),
+    Part = parts.Part,
+    PartKey = parts.PartKey;
 
 
 /**
@@ -13,7 +15,7 @@ var Part = require("../parts").Part;
  * Use the KeyCorrector transform to correct the keys.
  * @extends stream.Transform
  */
-function HTMLToParts(options) {
+var HTMLToParts = exports.HTMLToParts = function HTMLToParts(options) {
   if (!(this instanceof HTMLToParts))
     return new HTMLToParts(options);
 
@@ -58,15 +60,7 @@ HTMLToParts.prototype._transform = function(chunk, encoding, cb) {
 };
 
 HTMLToParts.prototype._flush = function(cb) {
-  this.closePart();
-  cb();
-};
-
-HTMLToParts.prototype._flush = function(cb) {
   this.saxStream.end();
-  // cb() should be called inside the callback of saxStream.end,
-  // but there is currently a bug in sax-js:
-  // https://github.com/isaacs/sax-js/issues/143
   cb();
 };
 
@@ -143,6 +137,70 @@ HTMLToParts.prototype.closetag = function(tagName) {
   }
 }
 
-module.exports = {
-  HTMLToParts: HTMLToParts
+
+/**
+ * Stream transform that transforms a stream of parts with eventually bad keys
+ * to a stream of parts that all have a valid key, in increasing order
+ * @constructor
+ */
+var KeyCorrector = exports.KeyCorrector = function KeyCorrector(options) {
+  if (!(this instanceof KeyCorrector))
+    return new KeyCorrector(options);
+
+  Transform.call(this, options);
+  this._writableState.objectMode = true;
+  this._readableState.objectMode = true;
+
+  this._buffer = [];
+  this._lastKey = options.firstKey || new PartKey(0);
+}
+util.inherits(KeyCorrector, Transform);
+
+KeyCorrector.prototype._transform = function(part, encoding, cb){
+  if (part.key.number > this._lastKey.number) {
+    var keys = PartKey.between(this._lastKey, part.key, this._buffer.length);
+    for (var i=0; i<this._buffer.length; i++) {
+      this._buffer[i].key = keys[i];
+      this.push(this._buffer[i]);
+    }
+    this.push(part);
+    this._lastKey = part.key;
+    this._buffer = [];
+  } else {
+    this._buffer.push(part);
+  }
+  cb();
+}
+
+KeyCorrector.prototype._flush = function(cb){
+  for (var i=0; i<this._buffer.length; i++) {
+    var part = this._buffer[i];
+    part.key = PartKey.after(this._lastKey);
+    this.push(part);
+    this._lastKey = part.key;
+  }
+  cb();
+}
+
+/**
+ * Stream transform that adds keys in increasing order to a parts stream
+ * @constructor
+ */
+var KeyGenerator = exports.KeyGenerator = function KeyGenerator(options) {
+  if (!(this instanceof KeyGenerator))
+    return new KeyGenerator(options);
+
+  Transform.call(this, options);
+  this._writableState.objectMode = true;
+  this._readableState.objectMode = true;
+
+  this._lastKey = options.firstKey || new PartKey(0);
+}
+util.inherits(KeyGenerator, Transform);
+
+KeyGenerator.prototype._transform = function(part, encoding, cb){
+  part.key = PartKey.after(this._lastKey);
+  this._lastKey = part.key;
+  this.push(part);
+  cb();
 }
