@@ -3,6 +3,15 @@ var PartKey = require("./index.js").PartKey;
 var strings = ["00000000.00000000-123", "0.00001", "1.1-hello", "2.2-world"];
 var orderedParts = strings.map(function(s){return PartKey.parse(s)});
 
+var formattedStrings = ["00000000.0000000-0", "00000000.0000001-1",
+    "000f0000.0000000-1", "00000000.1000000-41", "10000000.0000000-156846"]
+
+
+exports["test parsing and formatting of correctly formatted keys"] = function(assert) {
+  formattedStrings.forEach(function(str){
+    assert.equal(PartKey.parse(str).toString(), str, "Parse and format " + str);
+  });
+};
 
 exports["test that order is preserved"] = function(assert) {
   assert.deepEqual(orderedParts, orderedParts.sort(),

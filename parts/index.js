@@ -58,7 +58,7 @@ exports.PartKey = PartKey;
  */
 PartKey.parse = function(str) {
   var parsed = str.split('-', 2);
-  var number = parseFloat(parsed[0]);
+  var number = parseNum(parsed[0]);
   if (number === null) throw new Error("Invalid PartKey: invalid number");
   var uid    = parsed[1]; 
   return new PartKey(number, uid);
@@ -124,8 +124,8 @@ PartKey.prototype.toString = function(){
 };
 
 /**
- * Format a number to a 17-characters string:
- * 8 hex digits, a dot, and 8 more hex digits
+ * Format a number to a 16-characters string:
+ * 8 hex digits, a dot, and 7 more hex digits
  * @private
  */
 function formatNum(num) {
@@ -133,9 +133,23 @@ function formatNum(num) {
   while(intpart.length < 8) intpart = "0" + intpart;
   intpart = intpart.slice(-8);
 
-  var floatpart = Math.floor((num - Math.floor(num)) * 1e8).toString(16);
-  while(floatpart.length < 8) floatpart = '0' + floatpart;
+  var floatpart = Math.floor((num - Math.floor(num)) * (1<<28)).toString(16);
+  while(floatpart.length < 7) floatpart = '0' + floatpart;
   floatpart = floatpart.slice(0, 8);
 
   return intpart  + '.' + floatpart;
+}
+
+/**
+ * Converts a number formatted by formatNum to a number.
+ * @see {@link formatNum}
+ */
+function parseNum(numStr) {
+  var parts     = numStr.split('.', 2),
+      p1 = parts[0] || '0';
+      p2 = parts[1] || '0';
+  while(p2.length < 7) p2 += '0';
+  var intpart   = parseInt(p1, 16) || 0;
+  var floatpart = parseInt(p2, 16) || 0;
+  return intpart + floatpart / (1<<28);
 }
