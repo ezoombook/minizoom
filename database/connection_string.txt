@@ -1,0 +1,1 @@
+mysql://user:pass@host/db?debug=true&charset=UTF8_GENERAL_CI
