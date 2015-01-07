@@ -1,67 +1,48 @@
-# react-quickstart
+# eZoomBook
+This project is an attempt to create an eZoomBook platform based of different
+principles than the original one built in Scala.
 
-A minimal React project template which combines:
+## Principles
+This platform uses the principle of multi-layer books, called eZoomBooks.
 
-  * [react-router-component][] to provide HTML5 History routing and navigation
+A layer is just a version of the book, and all the layers have anchors, that
+allow us to display them side-by-side.
 
-  * [react-async][] to create "asynchronous" React components
+When a book is imported, a new layer is created. Then all layers are created
+by copying an existing layer. The modifications should preserve anchors as
+much as possible, so that the platform can keep track of the correspondences
+between two layers.
 
-  * [express][] to serve pre-rendered React components, assets and provide API
+No distinction is made between an eZoomBook and a book. 
 
-  * [browserify][] to provide module system for a browser
+## Technical choices
+### Programming languages
+ * Javascript (es5, commented using the JSdoc syntax)
+ * JSX (for the user interface)
 
-  * [npm][] to install and manage server-side and client-side dependencies
+### Database
+Only one relational database. Knex is used to abstract SQL queries.
+The goal is to keep all database related functions in the same submodule, in
+order to make it as easy as possible to change database later.
 
-Every "page" in the application is **pre-rendered on server** so the user can
-see the UI before the client code is shipped to a browser. After that
-application starts functioning like a **single page application**, navigating
-between "pages" without reloads.
+### Main dependencies
+ * knex for database management
+ * browserify for client-side code
 
-## Project structure
+## Code organisation
+The server manages streams of parts (paragraphs), that it saves to the database,
+or sends to the client.
 
-Project structure is really minimal, you'd probably like to customize it for
-your specific needs and taste:
+The client manages the edition of a list of parts, and sends it back to the server.
+"Managing the edition" should not be more difficult then just letting the user
+change the text, and trying to guess where new parts have to be created, and when
+old parts should be reused.
 
-    .
-    ├── assets
-    ├── client.js
-    ├── package.json
-    └── server.js
+## Organisation of the code
+As much code as possible should be kept in separate modules.
 
-Directory `assets` is served under `/assets` URL, `client.js` module contains UI
-code while `server.js` — HTTP server which serves pre-rendered React components,
-assets and provide a stub for a REST API.
+Code for managing individual parts goes to `parts`.
 
-## Development workflow
+Code for managing the stream of parts goes to `import`.
 
-After cloning a git repo, run:
-
-    % npm install
-
-to install all needed dependencies and then:
-
-    % npm run start
-
-to start a development server.
-
-Now you can start edit the source code — on changes, server will be reloaded and
-client code bundle will be rebuilt.
-
-## Going "production"
-
-To build an optimized bundle of client code run:
-
-    % npm run build
-
-which will produce `assets/bundle.js` build, then:
-
-    % npm run start-prod
-
-to start server in "production" mode (no source code watching and serving
-optimized bundle to browser).
-
-[react-router-component]: http://andreypopp.viewdocs.io/react-router-component
-[react-async]: http://andreypopp.viewdocs.io/react-async
-[express]: expressjs.com
-[npm]: https://www.npmjs.org/
-[browserify]: http://browserify.org/
+Code that interacts with the database goes to `database`.
