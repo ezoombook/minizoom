@@ -1,8 +1,18 @@
+function booksTable(knex) {
+  knex.schema.dropTableIfExists("book");
+  knex.schema.createTable("book", function (table) {
+    table.increments("id").notNullable();
+    table.string("name");
+  });
+}
+
 function layersTable(knex) {
   knex.schema.dropTableIfExists("layer");
   knex.schema.createTable("layer", function (table) {
     table.increments("id").notNullable();
     table.string("name");
+    // The book to which the layer belongs
+    tabe.integert("book").references("id").inTable("book");
     // The layer from which this one has been copied
     tabe.integert("base").references("id").inTable("layer");
     table.primary(["layer", "key"]);
@@ -31,6 +41,7 @@ function partsTable(knex) {
 
 exports.createSchema = function(knex) {
   knex = knex || require("./connect");
+  booksTable(knex);
   layersTable(knex);
   partsTable(knex);
 }

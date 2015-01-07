@@ -12,8 +12,14 @@ function tearDown(){
   return testDb.raw("DROP DATABASE test_ezoombook");
 }
 
-exports["test schema creation"] = function() {
+exports["test database"] = function() {
   require("./create_schema").createSchema(testDb);
+  var db = new (require("./index"))(testDb);
+  db.addBook({
+    name: "**test**"
+  }).then(function(bookId){
+    db
+  });
 };
 
 if (module == require.main) {
