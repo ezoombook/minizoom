@@ -1,10 +1,10 @@
 var fs = require("fs");
 
-var connectionFile = __dirname + "/connection_string.txt";
-var connectionStr = fs.readFileSync(connectionFile, "utf8"); 
+connectionFile = __dirname + "/connection-string-" +
+                  ((process.env.NODE_ENV === 'production') ? "prod" : "dev") +
+                  ".json";
 
-module.exports = require('knex')({
-  client: 'mysql',
-  connection: connectionStr
-});
+module.exports = require('knex')(
+  JSON.parse(fs.readFileSync(connectionFile, "utf8")) 
+);
 
