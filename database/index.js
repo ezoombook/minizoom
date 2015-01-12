@@ -39,6 +39,23 @@ Db.prototype.addLayer = function (layer, originalLayer) {
 };
 
 /**
+ * Get a list of all layers that are in a book
+ * @return a promise that resolves with an array of layers
+ */
+Db.prototype.getLayers = function (bookId) {
+  return this.db("layer").where("book", bookId);
+};
+
+/**
+ * @return a promise that is resolved with a list of chapters in the book
+ */
+Db.prototype.getChapters = function (layerId) {
+  return this.db("part")
+              .where("layer", layerId)
+              .whereNotNull("heading");
+};
+
+/**
  * Insert parts in the database. Deletes the chapter in which the first part is
  * @param partsStream - A stream of parts, the first one indicates the chapter
  * @param layerId - The id of the layer in which the chapter is
