@@ -47,7 +47,7 @@ exports["test database"] = function(test) {
       partsStream.end();
       return dbAPI.addChapter(partsStream, layerId);
     }).then(function(){
-     var stream = dbAPI.getChapter("11");
+     var stream = dbAPI.getPartsInChapter("11");
      return new Promise(function (accept, reject) {
       stream.on("end", accept);
       stream.on("data", function(part){

@@ -99,7 +99,7 @@ Db.prototype._partsInChapter = function(chapterKey) {
  * key >= firstPartKey
  * and key < (the key of the next chapter)
  */
-Db.prototype.getChapter = function(firstPartKey) {
+Db.prototype.getPartsInChapter = function(firstPartKey) {
   return this._partsInChapter(firstPartKey)
               .select(["key", "heading", "contents"])
               .pipe(new DbAdapter);
