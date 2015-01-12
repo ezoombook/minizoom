@@ -17,7 +17,7 @@ exports.tearDown = function tearDown(callback){
 }
 
 exports["test database"] = function(test) {
-    test.expect(5); // Number of assertions
+    test.expect(7); // Number of assertions
     var bookId, layerId;
     var dbAPI = new (require("./index"))(testDb);
     dbAPI.addBook({
@@ -28,12 +28,19 @@ exports["test database"] = function(test) {
       test.notEqual(bookId, null, "addBook returns the id of the book")
 
       return dbAPI.addLayer({
-        "name": "layer 1",
+        "name": "layer 1: µ-summary",
         "book": bookId
       })
     })
-    .then(function(id){
+    .then(function(id) {
       layerId = id;
+      return dbAPI.getLayers(bookId);
+    })
+    .then(function(layers){
+      test.strictEqual(layers.length, 1, "getLayers: number of layers");
+      test.strictEqual(layers[0].name, "layer 1: µ-summary", "getLayers: name");
+    })
+    .then(function(){
       var partsStream = new (require("stream").PassThrough);
       partsStream._writableState.objectMode = true;
       partsStream._readableState.objectMode = true;
