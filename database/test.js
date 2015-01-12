@@ -17,12 +17,14 @@ exports.tearDown = function tearDown(callback){
 }
 
 exports["test database"] = function(test) {
-    test.expect(2); // Number of assertions
+    test.expect(5); // Number of assertions
+    var bookId, layerId;
     var dbAPI = new (require("./index"))(testDb);
     dbAPI.addBook({
       name: "**test**"
     })
-    .then(function(bookId){
+    .then(function(id){
+      bookId = id;
       test.notEqual(bookId, null, "addBook returns the id of the book")
 
       return dbAPI.addLayer({
@@ -30,7 +32,8 @@ exports["test database"] = function(test) {
         "book": bookId
       })
     })
-    .then(function(layerId){
+    .then(function(id){
+      layerId = id;
       var partsStream = new (require("stream").PassThrough);
       partsStream._writableState.objectMode = true;
       partsStream._readableState.objectMode = true;
@@ -46,7 +49,16 @@ exports["test database"] = function(test) {
       });
       partsStream.end();
       return dbAPI.addChapter(partsStream, layerId);
-    }).then(function(){
+    })
+    .then(function(){
+      return dbAPI.getChapters(layerId);
+    })
+    .then(function(chapters){
+      test.strictEqual(chapters.length, 1, "getChapters: number of chapters");
+      test.strictEqual(chapters[0].heading, 1, "getChapters: heading");
+      test.strictEqual(chapters[0].contents, "Chap II", "getChapters: contents");
+    })
+    .then(function(){
      var stream = dbAPI.getPartsInChapter("11");
      return new Promise(function (accept, reject) {
       stream.on("end", accept);
