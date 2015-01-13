@@ -50,7 +50,13 @@ var api = express()
   .get("/parts", function(req, res){
     // This API function is special, it does not return a single json
     // response, but several stringified parts, sperated by two new lines "\n\n"
-    
+    var layerId    = parseInt(req.query.layerId);
+    var chapterKey = "" + req.query.chapterKey;
+    var stream = dbAPI.getPartsInChapter(layerId, chapterKey);
+    stream.on("data", function(part){
+      res.write(part.toString() + "\n\n");
+    });
+    stream.on("end", function(){res.end()});
   });
 
 var app = express();
