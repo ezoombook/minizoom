@@ -36,6 +36,23 @@ Part.prototype.setHeading = function (headingLevel) {
   headingLevel = parseInt(headingLevel) || 1;
   this.heading = headingLevel;
 }
+
+/**
+ * Serializes the part as a string, that can then be decoded with
+ * Part.fromString()
+ */
+Part.prototype.toString = function() {
+  return JSON.stringify(this);
+}
+
+/**
+ * Return a new part from a string exported by part.toString()
+ */
+Part.fromString = function(str) {
+  var obj = JSON.parse(str);
+  var key = new PartKey(obj.key.number, obj.key.uid);
+  return new Part(key, obj.heading, obj.contents);
+}
 exports.Part = Part;
 
 /**
