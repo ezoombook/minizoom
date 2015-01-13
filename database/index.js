@@ -94,8 +94,7 @@ Db.prototype.addChapter = function (partsStream, layerId) {
       .catch(reject);
     });
     partsStream.on("error", reject);
-    partsStream.on("close", resolve); 
-    partsStream.on("end", resolve); 
+    partsStream.on("end", end);
   });
 };
 
