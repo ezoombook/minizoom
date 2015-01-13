@@ -9,6 +9,7 @@ var reactify    = require('reactify');
 var nodejsx     = require('node-jsx').install();
 var App         = require('./client.jsx');
 var data        = require('./data');
+var dbAPI       = new (require("./database"));
 
 var development = process.env.NODE_ENV !== 'production';
 
@@ -29,14 +30,22 @@ function renderApp(req, res, next) {
   );
 }
 
-var api = express()
-  .get('/users/:username', function(req, res) {
-    var username = req.params.username;
-    res.send({
-      username: username,
-      name: username.charAt(0).toUpperCase() + username.slice(1)
+function dbResponse(params, dbAPIMethod) {
+  return function(req, res) {
+    var ids = params.map(function(p){return parseInt(req.query[p])});
+    if (ids.some(isNaN)) throw "Invalid non-integer parameter";
+    dbAPI[dbAPIMethod].apply(dbAPI, ids).then(function(results){
+      res.send(results);
+    })
+    .catch(function(err){
+      res.send("Database error");
     });
-  });
+  }
+}
+
+var api = express()
+  .get("/layers", dbResponse(["bookId"], "getLayers"))
+  .get("/chapters", dbResponse(["layerId"], "getChapters"));
 
 var app = express();
 
