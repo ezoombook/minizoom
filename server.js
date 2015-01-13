@@ -46,7 +46,12 @@ function dbResponse(params, dbAPIMethod) {
 var api = express()
   .get("/layers", dbResponse(["bookId"], "getLayers"))
   .get("/chapters", dbResponse(["layerId"], "getChapters"))
-  .get("/books", dbResponse([], "getBooks"));
+  .get("/books", dbResponse([], "getBooks"))
+  .get("/parts", function(req, res){
+    // This API function is special, it does not return a single json
+    // response, but several stringified parts, sperated by two new lines "\n\n"
+    
+  });
 
 var app = express();
 

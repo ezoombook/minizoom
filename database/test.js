@@ -66,7 +66,7 @@ exports["test database"] = function(test) {
       test.strictEqual(chapters[0].contents, "Chap II", "getChapters: contents");
     })
     .then(function(){
-     var stream = dbAPI.getPartsInChapter("11");
+     var stream = dbAPI.getPartsInChapter(layerId, "11");
      return new Promise(function (accept, reject) {
       stream.on("end", accept);
       stream.on("data", function(part){

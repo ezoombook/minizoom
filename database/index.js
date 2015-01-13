@@ -103,8 +103,9 @@ Db.prototype.addChapter = function (partsStream, layerId) {
 /**
  * @private
  */
-Db.prototype._partsInChapter = function(chapterKey) {
+Db.prototype._partsInChapter = function(layerId, chapterKey) {
   return this.db("part")
+             .where("layer", layerId)
              .where("key", '>=', chapterKey)
              .where("key", '<', function(){
               this.select("key").from("part")
@@ -115,7 +116,8 @@ Db.prototype._partsInChapter = function(chapterKey) {
                     this.from("part").max("key");
                   })
                   .limit(1);
-             });
+             })
+             .orderBy("key");
 };
 
 /**
@@ -123,12 +125,12 @@ Db.prototype._partsInChapter = function(chapterKey) {
  * key >= firstPartKey
  * and key < (the key of the next chapter)
  */
-Db.prototype.getPartsInChapter = function(firstPartKey) {
-  return this._partsInChapter(firstPartKey)
+Db.prototype.getPartsInChapter = function(layerId, firstPartKey) {
+  return this._partsInChapter(layerId, firstPartKey)
               .select(["key", "heading", "contents"])
               .pipe(new DbAdapter);
 }
 
-Db.prototype.removeChapter = function (chapterKey) {
-  return this._partsInChapter(chapterKey).del();
+Db.prototype.removeChapter = function (layerId, chapterKey) {
+  return this._partsInChapter(layerId, chapterKey).del();
 };
