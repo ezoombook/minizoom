@@ -39,6 +39,13 @@ Db.prototype.addLayer = function (layer, originalLayer) {
 };
 
 /**
+ * Get all the books in the database
+ */
+Db.prototype.getBooks = function() {
+  return this.db("book");
+};
+
+/**
  * Get a list of all layers that are in a book
  * @return a promise that resolves with an array of layers
  */

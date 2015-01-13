@@ -45,7 +45,8 @@ function dbResponse(params, dbAPIMethod) {
 
 var api = express()
   .get("/layers", dbResponse(["bookId"], "getLayers"))
-  .get("/chapters", dbResponse(["layerId"], "getChapters"));
+  .get("/chapters", dbResponse(["layerId"], "getChapters"))
+  .get("/books", dbResponse([], "getBooks"));
 
 var app = express();
 
