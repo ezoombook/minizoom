@@ -70,13 +70,22 @@ Db.prototype.getChapters = function (layerId) {
 Db.prototype.addChapter = function (partsStream, layerId) {
   var self = this;
   return new Promise(function (resolve, reject) {
-    var num = 0, // Number of parts remaining
-        finished = false;
 
+    // Number of parts for which a request has been made, but no answer has
+    // been received yet
+    var num = 0;
+
+    // Indicates whether all the needed requests have been made
+    var finished = false;
+
+    // Function to be called everytime the database answers that a part has
+    // been successfully inserted
     var inserted = function inserted() {
       num--;
       if (num === 0 && finished) resolve(true);
     };
+
+    // Function to be called when all the needed requests have been made
     var end = function end(){
       finished = true;
       if (num === 0) resolve(true);
@@ -91,7 +100,8 @@ Db.prototype.addChapter = function (partsStream, layerId) {
         "heading" : part.heading
       })
       .then(inserted)
-      .catch(reject);
+      .catch(reject); // reject the promise if any insertion failed
+      // TODO: insert all parts inside a database transaction?
     });
     partsStream.on("error", reject);
     partsStream.on("end", end);
