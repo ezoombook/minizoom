@@ -72,10 +72,13 @@ exports["test database"] = function(test) {
       stream.on("data", function(part){
         test.equal(part.contents, "Hello", "The right part is streamed");
       });
+      stream.on("error", reject);
      });
     })
     .done(
-        test.done.bind(test),
+        function(){
+          test.done();
+        },
         function(err){
           test.ok(false, err);
           test.done();
