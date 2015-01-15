@@ -46,3 +46,7 @@ Code for managing individual parts goes to `parts`.
 Code for managing the stream of parts goes to `import`.
 
 Code that interacts with the database goes to `database`.
+
+## License
+This projected is licensed under the terms
+of the [GPLv2](http://www.gnu.org/licenses/gpl-2.0.html) license.
