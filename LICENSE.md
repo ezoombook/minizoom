@@ -1,5 +1,5 @@
 Minizoom is a platform for creating and sharing ezoombooks.
-Copyright (C) 2015 (École Centrale de Nantes)[http://www.ec-nantes.fr/]
+Copyright (C) 2015 [École Centrale de Nantes](http://www.ec-nantes.fr/)
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
