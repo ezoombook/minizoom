@@ -15,6 +15,19 @@ between two layers.
 
 No distinction is made between an eZoomBook and a book. 
 
+## Installation
+###Install
+```
+git clone git@github.com:ezoombook/minizoom.git
+cd minizoom
+npm install
+```
+### Run
+```
+npm start
+```
+
+
 ## Technical choices
 ### Programming languages
  * Javascript (es5, commented using the JSdoc syntax)
@@ -29,7 +42,7 @@ order to make it as easy as possible to change database later.
  * knex for database management
  * browserify for client-side code
 
-## Code organisation
+## How it works
 The server manages streams of parts (paragraphs), that it saves to the database,
 or sends to the client.
 
