@@ -15,19 +15,27 @@ var development = process.env.NODE_ENV !== 'production';
 
 function renderApp(req, res, next) {
   var path = url.parse(req.url).pathname;
+  var bookId = req.params.bookId;
+  var layerId = req.params.layerId;
   var initialState = {
     path: path,
-    chapters: data.chapters(),
-    layers: data.layers(),
-    parts: data.parts()
-  }
-  var app = React.createElement(App, {
-      initialState: initialState
+    chapters: [],
+    layers: [],
+    parts: []
+  };
+  dbAPI.getChapters(layerId).then(function(chap) {
+    initialState.chapters = chap;
+    return dbAPI.getLayers(bookId);
+  }).then(function(layers){
+    initialState.layers = layers;
+    console.log(layers);
+    var partsStream = dbAPI.getPartsInChapter(layerId, "000");
+    var app = React.createElement(App, {initialState: initialState});
+    res.send("<!doctype html>\n" + 
+        React.renderToString(app) +
+        "<script>initialState = "+JSON.stringify(initialState)+"</script>"
+    );
   });
-  res.send("<!doctype html>\n" + 
-      React.renderToString(app) +
-      "<script>initialState = "+JSON.stringify(initialState)+"</script>"
-  );
 }
 
 function dbResponse(params, dbAPIMethod) {
@@ -76,7 +84,7 @@ if (development) {
 app
   .use('/assets', express.static(path.join(__dirname, 'assets')))
   .use('/api', api)
-  .use(renderApp)
+  .use('/book/:bookId/:layerId', renderApp)
   .listen(3000, function() {
     console.log('Point your browser at http://localhost:3000');
   });

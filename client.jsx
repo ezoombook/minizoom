@@ -20,7 +20,7 @@ var Layers = React.createClass({
         <ul>
         {
           this.props.layers.map(function(layer){
-              return <li key={layer.key}>{layer.title}</li>;
+              return <li key={layer.id}>{layer.name}</li>;
           })
         }
         </ul>
