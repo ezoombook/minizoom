@@ -140,6 +140,10 @@ Db.prototype.getPartsInChapter = function(layerId, firstPartKey) {
               .pipe(new DbAdapter);
 }
 
+Db.prototype.getPartsInLayer = function (layerId) {
+  return this.db("part").where("layer", layerId);
+};
+
 Db.prototype.removeChapter = function (layerId, chapterKey) {
   return this._partsInChapter(layerId, chapterKey).del();
 };

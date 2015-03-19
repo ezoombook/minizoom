@@ -103,7 +103,7 @@ var Parts = React.createClass({
             return <span id={"anchor"+p.key}
                          data-key={p.key}
                           className="layer-anchor"></span>
-          } else if (p.level) {
+          } else if (p.heading) {
             return <h2 data-key={p.key}>{p.contents}</h2>
           } else {
             return <p data-key={p.key} >{p.contents}</p>
@@ -186,8 +186,6 @@ var App = React.createClass({
 });
 
 module.exports = App;
-
-console.log(React.version);
 
 if (typeof window === 'object') {
   var app; // golbal application variable

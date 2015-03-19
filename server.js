@@ -19,6 +19,8 @@ function renderApp(req, res, next) {
   var layerId = req.params.layerId;
   var initialState = {
     path: path,
+    layerId: layerId,
+    bookId: bookId,
     chapters: [],
     layers: [],
     parts: []
@@ -28,8 +30,10 @@ function renderApp(req, res, next) {
     return dbAPI.getLayers(bookId);
   }).then(function(layers){
     initialState.layers = layers;
-    console.log(layers);
-    var partsStream = dbAPI.getPartsInChapter(layerId, "000");
+    return dbAPI.getPartsInLayer(layerId);
+  }).then(function(parts){
+    initialState.parts = parts;
+    console.log(parts);
     var app = React.createElement(App, {initialState: initialState});
     res.send("<!doctype html>\n" + 
         React.renderToString(app) +
