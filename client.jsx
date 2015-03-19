@@ -119,6 +119,12 @@ var Parts = React.createClass({
 });
 
 
+var SaveBtn = React.createClass({
+  render: function() {
+    return <Button bsSize="large" bsStyle="primary" block>Save</Button> ;
+  }
+});
+
 var Chapters = React.createClass({
   render : function() {
     return (
@@ -153,6 +159,7 @@ var MainGrid = React.createClass({
               <Parts parts={this.props.parts} />
             </Col>
             <Col md={2}>
+              <SaveBtn />
               <Chapters chapters={this.props.chapters} />
             </Col>
           </Row>
