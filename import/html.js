@@ -151,6 +151,7 @@ var KeyCorrector = exports.KeyCorrector = function KeyCorrector(options) {
   this._writableState.objectMode = true;
   this._readableState.objectMode = true;
 
+  options = options || {};
   this._buffer = [];
   this._lastKey = options.firstKey || new PartKey(0);
 }

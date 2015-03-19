@@ -9,6 +9,7 @@ var reactify    = require('reactify');
 var nodejsx     = require('node-jsx').install();
 var App         = require('./client.jsx');
 var data        = require('./data');
+var importer    = require('./import/html');
 var dbAPI       = new (require("./database"));
 
 var development = process.env.NODE_ENV !== 'production';
@@ -33,7 +34,6 @@ function renderApp(req, res, next) {
     return dbAPI.getPartsInLayer(layerId);
   }).then(function(parts){
     initialState.parts = parts;
-    console.log(parts);
     var app = React.createElement(App, {initialState: initialState});
     res.send("<!doctype html>\n" + 
         React.renderToString(app) +
@@ -69,6 +69,20 @@ var api = express()
       res.write(part.toString() + "\n\n");
     });
     stream.on("end", function(){res.end()});
+  })
+  .post("/parts/:layerId", function(req, res, next){
+    var partsStream = req.pipe(importer.HTMLToParts()).pipe(importer.KeyCorrector());
+
+    dbAPI.addChapter(partsStream, req.params.layerId)
+      .then(function(r) {
+        res.end({success:true});
+        next();
+      },
+      function error(err) {
+        console.log("Error while saving parts", err);
+        res.end({success:false, error:err});
+        next();
+      });
   });
 
 var app = express();

@@ -1,5 +1,6 @@
 var Promise = require("promise"),
-    DbAdapter = require("./db-stream-adapter");
+    DbAdapter = require("./db-stream-adapter"),
+    parts     = require("../parts");
 
 /**
  * Class through which all database interactions should happen.
@@ -70,7 +71,8 @@ Db.prototype.getChapters = function (layerId) {
 Db.prototype.addChapter = function (partsStream, layerId) {
   var self = this;
   return new Promise(function (resolve, reject) {
-
+    self.db("part").where("layer", layerId).del() // Delete all parts in the layer
+    .then(function() {
     // Number of parts for which a request has been made, but no answer has
     // been received yet
     var num = 0;
@@ -94,7 +96,7 @@ Db.prototype.addChapter = function (partsStream, layerId) {
     partsStream.on("data", function(part){
       num++;
       self.db("part").insert({
-        "key"     : part.key,
+        "key"     : new parts.PartKey(part.key.number, part.key.uid).toString(),
         "layer"   : part.layer || layerId,
         "contents": part.contents,
         "heading" : part.heading
@@ -105,6 +107,10 @@ Db.prototype.addChapter = function (partsStream, layerId) {
     });
     partsStream.on("error", reject);
     partsStream.on("end", end);
+    }, function deletePartsFailed(err) {
+      //The deletion of the parts failed
+      reject(err);
+    });
   });
 };
 

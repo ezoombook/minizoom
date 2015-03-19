@@ -11,7 +11,7 @@
  * @argument contents {string} [contents=""]
  */
 function Part(key, heading, contents) {
-  this.key = (key instanceof PartKey) ? key : new PartKey(key);
+  this.key = (key instanceof PartKey) ? key : PartKey.parse(key);
   if (heading != null) this.setHeading(heading);
   if (contents != null) this.setContents(contents);
 } 
@@ -74,6 +74,7 @@ exports.PartKey = PartKey;
  * @return {PartKey}
  */
 PartKey.parse = function(str) {
+  if (!str) return new PartKey;
   var parsed = str.split('-', 2);
   var number = parseNum(parsed[0]);
   if (number === null) throw new Error("Invalid PartKey: invalid number");

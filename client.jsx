@@ -104,7 +104,9 @@ var Parts = React.createClass({
                          data-key={p.key}
                           className="layer-anchor"></span>
           } else if (p.heading) {
-            return <h2 data-key={p.key}>{p.contents}</h2>
+            return <h2 data-key={p.key} id={p.contents}>
+                        {p.contents}
+                    </h2>
           } else {
             return <p data-key={p.key} >{p.contents}</p>
           }
@@ -120,8 +122,15 @@ var Parts = React.createClass({
 
 
 var SaveBtn = React.createClass({
+  handleClick: function() {
+    var htmlParts = document.getElementById("main-edition-div").innerHTML;
+    var xhr = new XMLHttpRequest;
+    xhr.open("POST", "/api/parts/"+this.props.layerId);
+    xhr.send(htmlParts);
+  },
   render: function() {
-    return <Button bsSize="large" bsStyle="primary" block>Save</Button> ;
+    return <Button onClick={this.handleClick}
+                    bsSize="large" bsStyle="primary" block>Save</Button> ;
   }
 });
 
@@ -159,7 +168,7 @@ var MainGrid = React.createClass({
               <Parts parts={this.props.parts} />
             </Col>
             <Col md={2}>
-              <SaveBtn />
+              <SaveBtn layerId={this.props.layerId} />
               <Chapters chapters={this.props.chapters} />
             </Col>
           </Row>
@@ -176,7 +185,8 @@ var App = React.createClass({
   render: function() {
     var contents = <MainGrid layers={this.state.layers}
                               parts={this.state.parts}
-                              chapters={this.state.chapters}/>;
+                              chapters={this.state.chapters}
+                              layerId={this.state.layerId} />;
     return (
       <html>
         <head>
