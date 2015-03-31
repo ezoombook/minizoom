@@ -7,12 +7,25 @@ var React       = require('react');
 var browserify  = require('browserify');
 var reactify    = require('reactify');
 var nodejsx     = require('node-jsx').install();
+var Welcome     = require('./welcome.jsx');
 var App         = require('./client.jsx');
 var data        = require('./data');
 var importer    = require('./import/html');
 var dbAPI       = new (require("./database"));
 
 var development = process.env.NODE_ENV !== 'production';
+
+function renderWelcome(req, res, next) {
+  var initialState = {books: books};
+  dbAPI.getBooks().then(function(books){
+    initialState.books = books;
+    var welcome = React.createElement(Welcome, {initialState:initialState});
+    res.send("<!doctype html>\n" +
+          React.renderToString(welcome)+
+          "<script>initialState = "+JSON.stringify(initialState)+"</script>"
+    );
+  });
+}
 
 function renderApp(req, res, next) {
   var path = url.parse(req.url).pathname;
@@ -46,6 +59,7 @@ function dbResponse(params, dbAPIMethod) {
   return function(req, res) {
     var ids = params.map(function(p){return parseInt(req.query[p])});
     if (ids.some(isNaN)) throw "Invalid non-integer parameter";
+    //Not understand
     dbAPI[dbAPIMethod].apply(dbAPI, ids).then(function(results){
       res.send(results);
     })
@@ -86,7 +100,7 @@ var api = express()
   });
 
 var app = express();
-
+//There is no bundle.js, what's this for?
 if (development) {
   app.get('/assets/bundle.js', function(req, res) {
       res.writeHead(200, {"Content-Type":"text/javascript"});
@@ -102,6 +116,7 @@ if (development) {
 app
   .use('/assets', express.static(path.join(__dirname, 'assets')))
   .use('/api', api)
+  .use('/', renderWelcome)
   .use('/book/:bookId/:layerId', renderApp)
   .listen(3000, function() {
     console.log('Point your browser at http://localhost:3000');
