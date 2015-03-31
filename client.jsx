@@ -135,6 +135,13 @@ var SaveBtn = React.createClass({
 });
 
 var Chapters = React.createClass({
+  //Only show the chapiter choosen
+  //How it can be recognized by "main-edition-div"
+  // goTo: function(event) {
+  //   event.preventDefault();
+  //   this.state.chapters = {chap.key};
+  // },
+
   render : function() {
     return (
         <nav>
@@ -144,6 +151,7 @@ var Chapters = React.createClass({
             this.props.chapters.map(function(chap){
               return <li key={chap.key}><a
                       href={'#'+chap.contents}
+                      //To Change: if click ChapitreI, just show chapiterI
                       onClick={this.props.goTo}
                     >
                       {chap.contents}
@@ -203,7 +211,7 @@ var App = React.createClass({
 });
 
 module.exports = App;
-
+//Not understand
 if (typeof window === 'object') {
   var app; // golbal application variable
   window.onload = function() {
