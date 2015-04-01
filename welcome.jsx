@@ -16,7 +16,7 @@ var Nav = React.createClass({
 	render : function() {
 		return (
             <Nav fixedTop> 
-              <NavItem eventKey={1} href='#'>eZoomBook</NavItem>
+              <NavItem eventKey={1} href='/'>eZoomBook</NavItem>
               <NavItem eventKey={2} href='#'>Books</NavItem>
               <DropdownButton eventKey={3} title='Help!'>
                   <MenuItem eventKey='1'>Tutorial</MenuItem>
@@ -90,3 +90,12 @@ var Welcome = React.createClass({
 });
 
 module.exports = Welcome;
+
+if (typeof window === 'object') {
+  var app; // golbal application variable
+  window.onload = function() {
+    // initialState has been set before (sent as a payload by the server)
+    app = React.createElement(Welcome, {initialState:initialState});
+    React.render(app, document);
+  }
+}

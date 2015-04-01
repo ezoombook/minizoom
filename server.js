@@ -16,7 +16,11 @@ var dbAPI       = new (require("./database"));
 var development = process.env.NODE_ENV !== 'production';
 
 function renderWelcome(req, res, next) {
-  var initialState = {books: books};
+  var path = url.parse(req.url).pathname;
+  var initialState = {
+    path: path,
+    books: books
+  };
   dbAPI.getBooks().then(function(books){
     initialState.books = books;
     var welcome = React.createElement(Welcome, {initialState:initialState});
@@ -100,11 +104,16 @@ var api = express()
   });
 
 var app = express();
-//There is no bundle.js, what's this for?
 if (development) {
   app.get('/assets/bundle.js', function(req, res) {
       res.writeHead(200, {"Content-Type":"text/javascript"});
       browserify('./client.jsx', {
+        debug: true,
+      })
+      .transform(reactify)
+      .bundle()
+      .pipe(res);
+      browserify('./welcome.jsx', {
         debug: true,
       })
       .transform(reactify)
