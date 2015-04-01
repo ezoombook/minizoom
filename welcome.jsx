@@ -78,7 +78,7 @@ var MainGrid = React.createClass({
   }
 });
 
-var App = React.createClass({
+var Welcome = React.createClass({
   getInitialState: function() {
     return this.props.initialState;
   },
@@ -102,10 +102,10 @@ var App = React.createClass({
 module.exports = Welcome;
 
 if (typeof window === 'object') {
-  var app; // golbal application variable
+  var welcome; // golbal application variable
   window.onload = function() {
     // initialState has been set before (sent as a payload by the server)
-    app = React.createElement(Welcome, {initialState:initialState});
-    React.render(app, document);
+    welcome = React.createElement(Welcome, {initialState:initialState});
+    React.render(welcome, document);
   }
 }
