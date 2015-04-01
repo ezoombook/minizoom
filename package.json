@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "React project",
   "main": "./server.js",
-  "browser": "./client.js",
+  "browser": "./welcome.js",
   "browserify": {
     "transform": [
       [
