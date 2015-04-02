@@ -75,8 +75,8 @@ if (development) {
 app
   .use('/assets', express.static(path.join(__dirname, 'assets')))
   .use('/api', api)
-  .use('/', routes.index)
   .use('/book/:bookId/:layerId', client.edit)
+  .use('/', routes.index)
   .listen(3000, function() {
     console.log('Point your browser at http://localhost:3000');
   });
