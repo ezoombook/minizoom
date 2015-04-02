@@ -11,19 +11,10 @@ var routes = require('./routes');
 var client = require('./routes/client');
 var importer    = require('./import/html');
 var dbAPI       = new (require("./database"));
-var reactViews = require('express-react-views');
 
 var development = process.env.NODE_ENV !== 'production';
 
 var app = express();
-
-app.set('views', __dirname + '/views');
-app.set('view engine', 'jsx');
-app.engine('jsx', reactViews.createEngine({
-  jsx: {
-    harmony: true,
-  }
-}));
 
 function dbResponse(params, dbAPIMethod) {
   return function(req, res) {
@@ -71,7 +62,7 @@ var api = express()
 if (development) {
   app.get('/assets/bundle.js', function(req, res) {
       res.writeHead(200, {"Content-Type":"text/javascript"});
-      browserify('./views/welcome.jsx', {
+      browserify('./views/client.jsx', {
         debug: true,
       })
       .transform(reactify)
