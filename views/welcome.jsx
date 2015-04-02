@@ -4,6 +4,7 @@
 var React       = require('react');
 var superagent  = require('superagent');
 var bootstrap   = require('react-bootstrap');
+var client      = require("./client.jsx");
 
 var Grid = bootstrap.Grid,
     Row = bootstrap.Row,
@@ -101,11 +102,11 @@ var Welcome = React.createClass({
 
 module.exports = Welcome;
 
-if (typeof window === 'object') {
-  var welcome; // golbal application variable
-  window.onload = function() {
-    // initialState has been set before (sent as a payload by the server)
-    welcome = React.createElement(Welcome, {initialState:initialState});
-    React.render(welcome, document);
-  }
-}
+// if (typeof window === 'object') {
+//   var app; // golbal application variable
+//   window.onload = function() {
+//     // initialState has been set before (sent as a payload by the server)
+//     app = React.createElement(Welcome, {initialState:initialState});
+//     React.render(app, document);
+//   }
+// }

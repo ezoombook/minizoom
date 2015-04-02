@@ -7,74 +7,23 @@ var React       = require('react');
 var browserify  = require('browserify');
 var reactify    = require('reactify');
 var nodejsx     = require('node-jsx').install();
-var Welcome     = require('./welcome.jsx');
-var App         = require('./client.jsx')
-var data        = require('./data');
+var routes = require('./routes');
+var client = require('./routes/client');
 var importer    = require('./import/html');
 var dbAPI       = new (require("./database"));
+var reactViews = require('express-react-views');
 
 var development = process.env.NODE_ENV !== 'production';
 
-function renderWelcome(req, res, next) {
-  var path = url.parse(req.url).pathname;
-  var bookId = req.params.bookId;
-  var layerId = req.params.layerId;
-  var initialState = {
-    path: path,
-    layerId: layerId,
-    bookId: bookId,
-    books: [],
-    chapters: [],
-    layers: [],
-    parts: []
-  };
-  dbAPI.getBooks().then(function(book){
-    initialState.books = book;
-    return dbAPI.getChapters(layerId);
-  }).then(function(chap) {
-    initialState.chapters = chap;
-    return dbAPI.getLayers(bookId);
-  }).then(function(layers){
-    initialState.layers = layers;
-    return dbAPI.getPartsInLayer(layerId);
-  }).then(function(parts){
-    initialState.parts = parts;
-    var welcome = React.createElement(Welcome, {initialState: initialState});
-    res.send("<!doctype html>\n" + 
-        React.renderToString(welcome) +
-        "<script>initialState = "+JSON.stringify(initialState)+"</script>"
-    );
-  });
-}
+var app = express();
 
-
-function renderApp(req, res, next) {
-  var path = url.parse(req.url).pathname;
-  var bookId = req.params.bookId;
-  var layerId = req.params.layerId;
-  var initialState = {
-    path: path,
-    layerId: layerId,
-    bookId: bookId,
-    chapters: [],
-    layers: [],
-    parts: []
-  };
-  dbAPI.getChapters(layerId).then(function(chap) {
-    initialState.chapters = chap;
-    return dbAPI.getLayers(bookId);
-  }).then(function(layers){
-    initialState.layers = layers;
-    return dbAPI.getPartsInLayer(layerId);
-  }).then(function(parts){
-    initialState.parts = parts;
-    var app = React.createElement(App, {initialState: initialState});
-    res.send("<!doctype html>\n" + 
-        React.renderToString(app) +
-        "<script>initialState = "+JSON.stringify(initialState)+"</script>"
-    );
-  });
-}
+app.set('views', __dirname + '/views');
+app.set('view engine', 'jsx');
+app.engine('jsx', reactViews.createEngine({
+  jsx: {
+    harmony: true,
+  }
+}));
 
 function dbResponse(params, dbAPIMethod) {
   return function(req, res) {
@@ -119,25 +68,10 @@ var api = express()
       });
   });
 
-var app = express();
-var welcome = express();
-
-if (development) {
-  welcome.get('/assets/bundle.js', function(req, res) {
-      res.writeHead(200, {"Content-Type":"text/javascript"});
-      browserify('./welcome.jsx', {
-        debug: true,
-      })
-      .transform(reactify)
-      .bundle()
-      .pipe(res);
-  });
-}
-
 if (development) {
   app.get('/assets/bundle.js', function(req, res) {
       res.writeHead(200, {"Content-Type":"text/javascript"});
-      browserify('./client.jsx', {
+      browserify('./views/welcome.jsx', {
         debug: true,
       })
       .transform(reactify)
@@ -150,8 +84,8 @@ if (development) {
 app
   .use('/assets', express.static(path.join(__dirname, 'assets')))
   .use('/api', api)
-  .use('/', renderWelcome)
-  .use('/book/:bookId/:layerId', renderApp)
+  .use('/', routes.index)
+  .use('/book/:bookId/:layerId', client.edit)
   .listen(3000, function() {
     console.log('Point your browser at http://localhost:3000');
   });
