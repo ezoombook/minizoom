@@ -5,8 +5,7 @@ var React       = require('react');
 var superagent  = require('superagent');
 var bootstrap = require('react-bootstrap');
 
-var PageHeader = bootstrap.PageHeader,
-    Grid = bootstrap.Grid,
+var Grid = bootstrap.Grid,
     Row = bootstrap.Row,
     Col = bootstrap.Col,
     Panel = bootstrap.Panel,
@@ -204,11 +203,11 @@ var App = React.createClass({
 
 module.exports = App;
 
-if (typeof window === 'object') {
-  var app; // golbal application variable
-  window.onload = function() {
-    // initialState has been set before (sent as a payload by the server)
-    app = React.createElement(App, {initialState:initialState});
-    React.render(app, document);
-  }
-}
+// if (typeof window === 'object') {
+//   var app; // global application variable
+//   window.onload = function() {
+//     // initialState has been set before (sent as a payload by the server)
+//     app = React.createElement(App, {initialState:initialState});
+//     React.render(app, document);
+//   }
+// }

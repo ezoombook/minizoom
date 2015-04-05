@@ -7,40 +7,15 @@ var React       = require('react');
 var browserify  = require('browserify');
 var reactify    = require('reactify');
 var nodejsx     = require('node-jsx').install();
-var App         = require('./client.jsx');
-var data        = require('./data');
+var routes = require('./routes');
+var client = require('./routes/client');
+var book = require('./routes/book');
 var importer    = require('./import/html');
 var dbAPI       = new (require("./database"));
 
 var development = process.env.NODE_ENV !== 'production';
 
-function renderApp(req, res, next) {
-  var path = url.parse(req.url).pathname;
-  var bookId = req.params.bookId;
-  var layerId = req.params.layerId;
-  var initialState = {
-    path: path,
-    layerId: layerId,
-    bookId: bookId,
-    chapters: [],
-    layers: [],
-    parts: []
-  };
-  dbAPI.getChapters(layerId).then(function(chap) {
-    initialState.chapters = chap;
-    return dbAPI.getLayers(bookId);
-  }).then(function(layers){
-    initialState.layers = layers;
-    return dbAPI.getPartsInLayer(layerId);
-  }).then(function(parts){
-    initialState.parts = parts;
-    var app = React.createElement(App, {initialState: initialState});
-    res.send("<!doctype html>\n" + 
-        React.renderToString(app) +
-        "<script>initialState = "+JSON.stringify(initialState)+"</script>"
-    );
-  });
-}
+var app = express();
 
 function dbResponse(params, dbAPIMethod) {
   return function(req, res) {
@@ -85,12 +60,10 @@ var api = express()
       });
   });
 
-var app = express();
-
 if (development) {
   app.get('/assets/bundle.js', function(req, res) {
       res.writeHead(200, {"Content-Type":"text/javascript"});
-      browserify('./client.jsx', {
+      browserify('./views/client.jsx', {
         debug: true,
       })
       .transform(reactify)
@@ -99,10 +72,13 @@ if (development) {
   });
 }
 
+
 app
   .use('/assets', express.static(path.join(__dirname, 'assets')))
   .use('/api', api)
-  .use('/book/:bookId/:layerId', renderApp)
+  .use('/book/:bookId/:layerId', client.edit)
+  .use('/books',book.list)
+  .use('/', routes.index)
   .listen(3000, function() {
     console.log('Point your browser at http://localhost:3000');
   });
