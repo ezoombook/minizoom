@@ -9,6 +9,7 @@ var reactify    = require('reactify');
 var nodejsx     = require('node-jsx').install();
 var routes = require('./routes');
 var client = require('./routes/client');
+var book = require('./routes/book');
 var importer    = require('./import/html');
 var dbAPI       = new (require("./database"));
 
@@ -76,6 +77,7 @@ app
   .use('/assets', express.static(path.join(__dirname, 'assets')))
   .use('/api', api)
   .use('/book/:bookId/:layerId', client.edit)
+  .use('/books',book.list)
   .use('/', routes.index)
   .listen(3000, function() {
     console.log('Point your browser at http://localhost:3000');

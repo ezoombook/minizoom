@@ -5,8 +5,7 @@ var React       = require('react');
 var superagent  = require('superagent');
 var bootstrap = require('react-bootstrap');
 
-var PageHeader = bootstrap.PageHeader,
-    Grid = bootstrap.Grid,
+var Grid = bootstrap.Grid,
     Row = bootstrap.Row,
     Col = bootstrap.Col,
     Panel = bootstrap.Panel,

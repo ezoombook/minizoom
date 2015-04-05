@@ -38,10 +38,10 @@ var NavWelcome = React.createClass({
 var Books = React.createClass({
   render : function() {
     return (
-      <div>
+      <div className="book-block">
         {
           this.props.books.map(function(book){
-              return <h3 key={book.id}>{book.name}</h3>;
+              return <h3 key={book.id}><a href={'/book/'+book.id+'/1'}>{book.name}</a></h3>;
           })
         }
       </div>

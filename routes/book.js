@@ -4,9 +4,9 @@ var path        = require('path');
 var url         = require('url');
 var React       = require('react');
 var dbAPI       = new (require("../database"));
-var Welcome     = require("../views/welcome.jsx");
+var Books     = require("../views/books.jsx");
 
-exports.index = function renderWelcome(req, res) {
+exports.list = function renderBooks(req, res) {
   var path = url.parse(req.url).pathname;
   var bookId = req.params.bookId;
   var layerId = req.params.layerId;
@@ -30,11 +30,10 @@ exports.index = function renderWelcome(req, res) {
     return dbAPI.getPartsInLayer(layerId);
   }).then(function(parts){
     initialState.parts = parts;
-    var welcome = React.createElement(Welcome, {initialState: initialState});
+    var books = React.createElement(Books, {initialState: initialState});
     res.send("<!doctype html>\n" + 
-        React.renderToString(welcome) +
+        React.renderToString(books) +
         "<script>initialState = "+JSON.stringify(initialState)+"</script>"
     );
   });
 };
-
