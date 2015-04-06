@@ -13,7 +13,7 @@ var Grid = bootstrap.Grid,
 var SigninBtn = React.createClass({
   render: function() {
     return <Button href='/signin'
-                   bsSize="large" bsStyle="primary" block>Sign in</Button> ;
+                   bsSize="large" bsStyle="primary" block>Login</Button> ;
   }
 });
 
@@ -27,17 +27,17 @@ var SignupBtn = React.createClass({
 var MainGrid = React.createClass({
   render : function() {
     return (
-      <div>
+      <div className="homepage">
         <Grid>
-          <Row>
+          <Row className="signform">
             <Col md={6}><h1>eZoomBook</h1></Col>
-            <Col md={4}></Col>
-            <Col md={2}><SigninBtn/></Col>
+            <Col md={2}></Col>
+            <Col md={2} className="signform_btn"><SigninBtn/></Col>
           </Row>
           <Row>
             <Col md={6}><h1><small>Read as YOU Want</small></h1></Col>
-            <Col md={4}></Col>
-            <Col md={2}><SignupBtn/></Col>
+            <Col md={2}></Col>
+            <Col md={2} className="signform_btn"><SignupBtn/></Col>
           </Row>
 
         </Grid>
@@ -53,7 +53,7 @@ var Home = React.createClass({
       <html>
         <head>
           <link rel="stylesheet" href="/assets/style.css" />
-          <script src="/assets/bundle.js" />
+          <script src="../assets/bundle.js" />
           <meta charSet="utf8" />
           <title>HomeMinizoom</title>
         </head>

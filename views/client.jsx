@@ -158,7 +158,7 @@ var Chapters = React.createClass({
 var MainGrid = React.createClass({
   render : function() {
     return (
-        <Grid>
+        <Grid className="editpage">
           <Row className="app-columns">
             <Col md={2}>
               <Layers layers={this.props.layers}/>
