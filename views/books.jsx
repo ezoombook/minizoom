@@ -38,10 +38,10 @@ var NavWelcome = React.createClass({
 var Books = React.createClass({
   render : function() {
     return (
-      <div className="book-block">
+      <div>
         {
           this.props.books.map(function(book){
-              return <h3 key={book.id}><a href={'/book/'+book.id+'/1'}>{book.name}</a></h3>;
+              return <h3 key={book.id} className="bookblock"><a href={'/book/'+book.id+'/1'}>{book.name}</a></h3>;
           })
         }
       </div>
@@ -59,20 +59,19 @@ var NewBookBtn = React.createClass({
 var MainGrid = React.createClass({
   render : function() {
     return (
-      <div>
+      <div className="userpage">
         <NavWelcome />
         <Grid className="booklist">
-
           <Row>
             <Col md={8}><h1>Books</h1></Col>
-            <Col md={4}><NewBookBtn/></Col>
+            <Col md={2}></Col>
+            <Col md={2} className="newbook_btn"><NewBookBtn/></Col>
           </Row>
           <Row>
             <Col md={4}>
               <Books books={this.props.books} />
             </Col>
           </Row>
-
         </Grid>
       </div>
     );

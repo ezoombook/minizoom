@@ -158,7 +158,7 @@ var Chapters = React.createClass({
 var MainGrid = React.createClass({
   render : function() {
     return (
-        <Grid>
+        <Grid className="editpage">
           <Row className="app-columns">
             <Col md={2}>
               <Layers layers={this.props.layers}/>
@@ -194,7 +194,6 @@ var App = React.createClass({
           <meta charSet="utf8" />
           <title>Minizoom</title>
         </head>
-        <PageHeader>Minizoom</PageHeader>
         {contents}
       </html>
     );
