@@ -194,7 +194,6 @@ var App = React.createClass({
           <meta charSet="utf8" />
           <title>Minizoom</title>
         </head>
-        <PageHeader>Minizoom</PageHeader>
         {contents}
       </html>
     );
