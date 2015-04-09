@@ -9,7 +9,30 @@ var Grid = bootstrap.Grid,
     Row = bootstrap.Row,
     Col = bootstrap.Col,
     Panel = bootstrap.Panel,
-    Button = bootstrap.Button;
+    Button = bootstrap.Button,
+    Navbar = bootstrap.Navbar,
+    Nav = bootstrap.Nav,
+    NavItem = bootstrap.NavItem,
+    DropdownButton = bootstrap.DropdownButton,
+    MenuItem = bootstrap.MenuItem;
+
+var NavWelcome = React.createClass({
+  render : function() {
+    return (
+            <Navbar fixedTop inverse toggleNavKey={0}> 
+              <Nav>
+              <NavItem eventKey={1} href='/'>eZoomBook</NavItem>
+              <NavItem eventKey={2} href='/books'>Books</NavItem>
+              <DropdownButton eventKey={3} title='Help!'>
+                <MenuItem eventKey='1'>Tutorial</MenuItem>
+                <MenuItem eventKey='2'>FAQ</MenuItem>
+                <MenuItem eventKey='3'>Contact Us</MenuItem>
+              </DropdownButton>
+              </Nav>
+            </Navbar>
+      )
+  }
+});
 
 var Layers = React.createClass({
   render : function() {
@@ -158,7 +181,9 @@ var Chapters = React.createClass({
 var MainGrid = React.createClass({
   render : function() {
     return (
-        <Grid className="editpage">
+      <div className="editpage">
+        <NavWelcome />
+        <Grid>
           <Row className="app-columns">
             <Col md={2}>
               <Layers layers={this.props.layers}/>
@@ -172,6 +197,7 @@ var MainGrid = React.createClass({
             </Col>
           </Row>
         </Grid>
+      </div>
     );
   }
 });
@@ -202,11 +228,11 @@ var App = React.createClass({
 
 module.exports = App;
 
-// if (typeof window === 'object') {
-//   var app; // global application variable
-//   window.onload = function() {
-//     // initialState has been set before (sent as a payload by the server)
-//     app = React.createElement(App, {initialState:initialState});
-//     React.render(app, document);
-//   }
-// }
+if (typeof window === 'object') {
+  var app; // global application variable
+  window.onload = function() {
+    // initialState has been set before (sent as a payload by the server)
+    app = React.createElement(App, {initialState:initialState});
+    React.render(app, document);
+  }
+}

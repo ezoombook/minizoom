@@ -20,14 +20,14 @@ var Grid = bootstrap.Grid,
 var NavWelcome = React.createClass({
   render : function() {
     return (
-            <Navbar fixedTop> 
+            <Navbar fixedTop inverse toggleNavKey={0}> 
               <Nav>
               <NavItem eventKey={1} href='/'>eZoomBook</NavItem>
-              <NavItem eventKey={2} href='#'>Books</NavItem>
+              <NavItem eventKey={2} href='/books'>Books</NavItem>
               <DropdownButton eventKey={3} title='Help!'>
-                  <MenuItem eventKey='1'>Tutorial</MenuItem>
-                  <MenuItem eventKey='2'>FAQ</MenuItem>
-                  <MenuItem eventKey='3'>Contact us</MenuItem>
+                <MenuItem eventKey='1'>Tutorial</MenuItem>
+                <MenuItem eventKey='2'>FAQ</MenuItem>
+                <MenuItem eventKey='3'>Contact Us</MenuItem>
               </DropdownButton>
               </Nav>
             </Navbar>
@@ -41,7 +41,7 @@ var Books = React.createClass({
       <div>
         {
           this.props.books.map(function(book){
-              return <h3 key={book.id} className="bookblock"><a href={'/book/'+book.id+'/1'}>{book.name}</a></h3>;
+              return <Col md={4} className="bookblock"><h3 key={book.id} ><a href={'/book/'+book.id+'/1'}>{book.name}</a></h3></Col>;
           })
         }
       </div>
@@ -67,10 +67,8 @@ var MainGrid = React.createClass({
             <Col md={2}></Col>
             <Col md={2} className="newbook_btn"><NewBookBtn/></Col>
           </Row>
-          <Row>
-            <Col md={4}>
+          <Row className="bookblock-container">
               <Books books={this.props.books} />
-            </Col>
           </Row>
         </Grid>
       </div>
@@ -101,11 +99,11 @@ var Welcome = React.createClass({
 
 module.exports = Welcome;
 
-// if (typeof window === 'object') {
-//   var app; // golbal application variable
-//   window.onload = function() {
-//     // initialState has been set before (sent as a payload by the server)
-//     app = React.createElement(Welcome, {initialState:initialState});
-//     React.render(app, document);
-//   }
-// }
+if (typeof window === 'object') {
+  var app; // golbal application variable
+  window.onload = function() {
+    // initialState has been set before (sent as a payload by the server)
+    app = React.createElement(Welcome, {initialState:initialState});
+    React.render(app, document);
+  }
+}

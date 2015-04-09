@@ -7,4 +7,3 @@ connectionFile = __dirname + "/connection-string-" +
 module.exports = require('knex')(
   JSON.parse(fs.readFileSync(connectionFile, "utf8")) 
 );
-
