@@ -16,7 +16,9 @@ var Grid = bootstrap.Grid,
     DropdownButton = bootstrap.DropdownButton,
     MenuItem = bootstrap.MenuItem,
     Modal = bootstrap.Modal,
-    ModalTrigger = bootstrap.ModalTrigger;
+    ModalTrigger = bootstrap.ModalTrigger,
+    Glyphicon = bootstrap.Glyphicon,
+    Input = bootstrap.Input;
 
 var NavWelcome = React.createClass({
   render : function() {
@@ -41,7 +43,10 @@ var NewLayerModal = React.createClass({
   return(
   <Modal {...this.props} bsStyle='primary' title='Add Layer' animation={false}>
     <div className='modal-body'>
-      You want to create a new layer from this layer.
+      You will create a new layer from Layer: {this.props.name}
+      <br/>
+      <br/>
+      <Input type='text' label='New Layer Name' placeholder='Enter name' />
     </div>
     <div className='modal-footer'>
       <Button>Create</Button>
@@ -54,9 +59,9 @@ var NewLayerModal = React.createClass({
 var NewLayerTrigger = React.createClass({
   render : function() {
     return (
-      <div className='modal-container' style={{height: 200}}>
-        <ModalTrigger modal={<NewLayerModal container={this} />} container={this}>
-          <Button bsStyle='primary' bsSize='small'>Add Layer</Button>
+      <div className='modal-container'>
+        <ModalTrigger modal={<NewLayerModal name={this.props.name}/>}>
+          <Glyphicon glyph='camera'/>
         </ModalTrigger>
       </div>
     );
@@ -71,11 +76,10 @@ var Layers = React.createClass({
         <ul>
         {
           this.props.layers.map(function(layer){
-              return <li key={layer.id}>{layer.name}</li>;
+              return <li key={layer.id}><NewLayerTrigger name={layer.name}/> {layer.name} </li>;
           })
         }
-        </ul>
-        <NewLayerTrigger/>
+        </ul>        
       </Panel>
       );
   }
