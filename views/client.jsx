@@ -91,6 +91,28 @@ var EditorContents = React.createClass({
   }
 });
 
+var NewParts = React.createClass({       
+    render : function() {
+      return (
+        <div>{
+          this.props.parts.map(function(p){
+          if (!p.contents) {
+            return <span id={"anchor"+p.key}
+                         data-key={p.key}
+                          className="layer-anchor"></span>;
+          } else if (p.heading) {
+            return <Input type='text' bsSize="large" data-key={p.key} id={p.contents} defaultValue={p.contents} />;
+          } else {
+            return <Input type='textarea' bsSize="small" data-key={p.key} defaultValue={p.contents} />;
+          }
+          })
+        }
+        </div>
+      );
+    }
+
+});
+
 var Parts = React.createClass({
   handleChange: function handleChange(evt) {
       app.partsFromHTML(evt.target.value);
@@ -190,6 +212,12 @@ var SaveBtn = React.createClass({
   }
 });
 
+var NewSaveBtn = React.createClass({
+  render: function() {
+    return <Button bsSize="large" bsStyle="primary" block>New Save</Button> ;
+  }
+});
+
 var Chapters = React.createClass({
   render : function() {
     return (
@@ -222,11 +250,15 @@ var MainGrid = React.createClass({
             <Col md={2}>
               <Layers layers={this.props.layers}/>
             </Col>
-            <Col md={8}>
+            <Col md={4}>
               <Parts parts={this.props.parts} />
+            </Col>
+            <Col md={4}>
+              <NewParts parts={this.props.parts} />
             </Col>
             <Col md={2}>
               <SaveBtn layerId={this.props.layerId} />
+              <NewSaveBtn layerId={this.props.layerId} />
               <Chapters chapters={this.props.chapters} />
             </Col>
           </Row>
