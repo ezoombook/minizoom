@@ -4,6 +4,7 @@
 var React       = require('react');
 var superagent  = require('superagent');
 var bootstrap = require('react-bootstrap');
+var Textarea = require('react-textarea-autosize');
 
 var Grid = bootstrap.Grid,
     Row = bootstrap.Row,
@@ -101,9 +102,9 @@ var NewParts = React.createClass({
                          data-key={p.key}
                           className="layer-anchor"></span>;
           } else if (p.heading) {
-            return <Input type='text' bsSize="large" data-key={p.key} id={p.contents} defaultValue={p.contents} />;
+            return <Input type='text' className="heading-edit" data-key={p.key} id={p.contents} defaultValue={p.contents} />;
           } else {
-            return <Input type='textarea' bsSize="small" data-key={p.key} defaultValue={p.contents} />;
+            return <Textarea className="parts-edit" data-key={p.key} defaultValue={p.contents} />;
           }
           })
         }

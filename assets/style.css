@@ -65,3 +65,16 @@ body {
 .newlayer_btn{
   
 }
+
+.heading-edit{
+  border: 0px;
+  text-align: center;
+  font-size: 200%;
+  height: 50px;
+  box-shadow: 0 0 0;
+}
+
+.parts-edit{
+  border: 0px;
+  width: 360px;
+}
