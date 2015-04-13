@@ -32,6 +32,9 @@ function dbResponse(params, dbAPIMethod) {
 
 var api = express()
   .get("/layers", dbResponse(["bookId"], "getLayers"))
+  // .post("/newlayers/:layerId", function(req, res, next){
+  //   dbAPI.addLayer(layer, originalLayer)
+  // })
   .get("/chapters", dbResponse(["layerId"], "getChapters"))
   .get("/books", dbResponse([], "getBooks"))
   .get("/parts", function(req, res){
@@ -46,18 +49,19 @@ var api = express()
     stream.on("end", function(){res.end()});
   })
   .post("/parts/:layerId", function(req, res, next){
-    var partsStream = req.pipe(importer.HTMLToParts()).pipe(importer.KeyCorrector());
+    // var partsStream = req.pipe(importer.HTMLToParts()).pipe(importer.KeyCorrector());
 
-    dbAPI.addChapter(partsStream, req.params.layerId)
-      .then(function(r) {
-        res.end({success:true});
-        next();
-      },
-      function error(err) {
-        console.log("Error while saving parts", err);
-        res.end({success:false, error:err});
-        next();
-      });
+    // dbAPI.addChapter(partsStream, req.params.layerId)
+    //   .then(function(r) {
+    //     res.end({success:true});
+    //     next();
+    //   },
+    //   function error(err) {
+    //     console.log("Error while saving parts", err);
+    //     res.end({success:false, error:err});
+    //     next();
+    //   });
+  
   });
 
 if (development) {

@@ -20,7 +20,7 @@ body {
   width: 100%;
   display: block;
   background-color: #aaa;
-  height:1px;
+  height:0px;
 }
 
 .userpage {
@@ -76,5 +76,19 @@ body {
 
 .parts-edit{
   border: 0px;
+  font-size: 120%;
   width: 360px;
+}
+
+#layer-panel li {
+    list-style: none;
+}
+
+.modal-trig {
+    float: right;
+}
+
+.save_btn {
+    width: 50px;
+    margin-bottom: 30px;
 }

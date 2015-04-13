@@ -60,7 +60,7 @@ var NewLayerModal = React.createClass({
 var NewLayerTrigger = React.createClass({
   render : function() {
     return (
-      <div className='modal-container'>
+      <div className='modal-trig'>
         <ModalTrigger modal={<NewLayerModal name={this.props.name}/>}>
           <Glyphicon glyph='camera'/>
         </ModalTrigger>
@@ -72,7 +72,7 @@ var NewLayerTrigger = React.createClass({
 var Layers = React.createClass({
   render : function() {
     return (
-      <Panel>
+      <Panel id="layer-panel">
         <h4>eZoomLayers</h4>
         <ul>
         {
@@ -86,136 +86,52 @@ var Layers = React.createClass({
   }
 });
 
-var EditorContents = React.createClass({
-  render: function(){
-    return <div></div>
-  }
-});
+var Parts = React.createClass({
+    // handleChange : function(key) {
+    //   setState({
+    //     changedParts: changedParts+key
+    //   });
+    // },
 
-var NewParts = React.createClass({       
     render : function() {
       return (
-        <div>{
+        <div id="edition-div">{
           this.props.parts.map(function(p){
           if (!p.contents) {
             return <span id={"anchor"+p.key}
                          data-key={p.key}
-                          className="layer-anchor"></span>;
+                         className="layer-anchor"></span>;
           } else if (p.heading) {
-            return <Input type='text' className="heading-edit" data-key={p.key} id={p.contents} defaultValue={p.contents} />;
+            return <Input type='text' className="heading-edit" data-key={p.key} id={p.contents} defaultValue={p.contents} 
+                    onchange="handleChange(this.data-key)"/>;
           } else {
-            return <Textarea className="parts-edit" data-key={p.key} defaultValue={p.contents} />;
+            return <Textarea className="parts-edit" data-key={p.key} defaultValue={p.contents} 
+                    onchange="handleChange(this.data-key)"/>;
           }
           })
         }
         </div>
       );
     }
-
 });
-
-var Parts = React.createClass({
-  handleChange: function handleChange(evt) {
-      app.partsFromHTML(evt.target.value);
-  },
-
-  handleKeyDown: function(evt){
-    //Delete anchor if necessary
-    if (evt.keyCode === 8) { // Backspace
-      var sel = document.getSelection();
-      if (sel.focusOffset === sel.anchorOffset &&
-          sel.focusOffset === 0 &&
-          sel.anchorNode === sel.focusNode) {
-        //Nothing selected, caret at the beginning of a paragraph
-        var prev = sel.anchorNode.previousSibling ||
-                   sel.anchorNode.parentNode.previousSibling;
-        if (prev.className === "layer-anchor") {
-          //The anchor should be deleted
-          prev.parentNode.removeChild(prev);
-          evt.preventDefault();
-        }
-      }
-    }
-  },
-
-  handleKeyPress: function(evt){
-    //Add anchor when necessary
-    if (evt.which === 13) {//enter
-      var sel = document.getSelection();
-      if (sel.focusOffset === sel.anchorOffset &&
-          sel.anchorNode === sel.focusNode) {  
-        var node = sel.anchorNode;
-        if(node.nodeType === node.TEXT_NODE) node = node.parentElement;
-        if (node.nodeName === "P") {
-          var anchor = document.createElement("span");
-          if(node.previousElementSibling.nodeName === "P") {
-            var key1 = +node.dataset.key;
-            var key2 = +node.previousElementSibling.dataset.key;
-            if (key1 && key2) {
-              if (key1 === key2) {
-                var nextKey = +node.nextElementSibling.dataset.key;
-                if (nextKey > key1) {
-                  key1 = (nextKey + key1)/2;
-                  node.dataset.key = key1;
-                }
-              }
-              var newKey = (key1 + key2)/2;
-              anchor.dataset.key = newKey;
-              anchor.className = "layer-anchor";
-              anchor.id = "anchor" + newKey;
-              node.parentElement.insertBefore(anchor, node);
-            } 
-          }
-        }
-      }
-    }
-  },
-
-  render : function() {
-    return <div contentEditable
-                id="main-edition-div"
-                onKeyDown={this.handleKeyDown}
-                onKeyUp={this.handleKeyPress}>
-      {
-        this.props.parts.map(function(p){
-          if (!p.contents) {
-            return <span id={"anchor"+p.key}
-                         data-key={p.key}
-                          className="layer-anchor"></span>
-          } else if (p.heading) {
-            return <h2 data-key={p.key} id={p.contents}>
-                        {p.contents}
-                    </h2>
-          } else {
-            return <p data-key={p.key} >{p.contents}</p>
-          }
-        })
-      }
-          </div>;
-  },
-
-  changed: function(){
-    console.log(app);
-  }
-});
-
 
 var SaveBtn = React.createClass({
   handleClick: function() {
-    var htmlParts = document.getElementById("main-edition-div").innerHTML;
-    var xhr = new XMLHttpRequest;
-    xhr.open("POST", "/api/parts/"+this.props.layerId);
-    xhr.send(htmlParts);
   },
   render: function() {
-    return <Button onClick={this.handleClick}
-                    bsSize="large" bsStyle="primary" block>Save</Button> ;
+    return <Button className="save_btn" onClick={this.handleClick}
+                    bsSize="small" bsStyle="primary" block>Save</Button> ;
   }
 });
 
-var NewSaveBtn = React.createClass({
+var EditorContents = React.createClass({
   render: function() {
-    return <Button bsSize="large" bsStyle="primary" block>New Save</Button> ;
+    return (
+      <div>
+        <SaveBtn/>
+        <Parts parts={this.props.parts}/>
+      </div>
+      );
   }
 });
 
@@ -227,7 +143,7 @@ var Chapters = React.createClass({
           <ol>
           {
             this.props.chapters.map(function(chap){
-              return <li key={chap.key}><a
+              return <li key={chap.key} className="panel-list"><a
                       href={'#'+chap.contents}
                       onClick={this.props.goTo}
                     >
@@ -251,15 +167,14 @@ var MainGrid = React.createClass({
             <Col md={2}>
               <Layers layers={this.props.layers}/>
             </Col>
-            <Col md={4}>
-              <Parts parts={this.props.parts} />
+            <Col md={2}>
             </Col>
             <Col md={4}>
-              <NewParts parts={this.props.parts} />
+              <EditorContents layerId={this.props.layerId} parts={this.props.parts} />
             </Col>
             <Col md={2}>
-              <SaveBtn layerId={this.props.layerId} />
-              <NewSaveBtn layerId={this.props.layerId} />
+            </Col>
+            <Col md={2}>
               <Chapters chapters={this.props.chapters} />
             </Col>
           </Row>
