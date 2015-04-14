@@ -86,14 +86,37 @@ var Layers = React.createClass({
   }
 });
 
-var Parts = React.createClass({
-    // handleChange : function(key) {
-    //   setState({
-    //     changedParts: changedParts+key
-    //   });
-    // },
+var ContHeading = React.createClass({
+  getInitialState: function(){
+    return {value: this.props.p.contents};
+  },
+  handleChange: function(event) {
+    this.setState({value: event.target.value});
+    this.props.onSaveChange();
+  },
+  render: function(){
+    var value = this.state.value;
+    return <Input type='text' className="heading-edit" value={value} onChange={this.handleChange} />;
+  }
+});
 
-    render : function() {
+var ContPart = React.createClass({
+  getInitialState: function(){
+    return {value: this.props.p.contents};
+  },
+  handleChange: function(event) {
+    this.setState({value: event.target.value});
+    this.props.onSaveChange();
+  },
+  render: function(){
+    var value = this.state.value;
+    return <Textarea className="part-edit" value={value} onChange={this.handleChange} />;
+  }
+});
+
+var Parts = React.createClass({
+  render : function() {
+    var onContChange = this.props.onContChange;
       return (
         <div id="edition-div">{
           this.props.parts.map(function(p){
@@ -102,11 +125,9 @@ var Parts = React.createClass({
                          data-key={p.key}
                          className="layer-anchor"></span>;
           } else if (p.heading) {
-            return <Input type='text' className="heading-edit" data-key={p.key} id={p.contents} defaultValue={p.contents} 
-                    onchange="handleChange(this.data-key)"/>;
+            return <ContHeading key={p.key} p={p} onSaveChange={onContChange}/>;
           } else {
-            return <Textarea className="parts-edit" data-key={p.key} defaultValue={p.contents} 
-                    onchange="handleChange(this.data-key)"/>;
+            return <ContPart key={p.key} p={p} onSaveChange={onContChange}/>;
           }
           })
         }
@@ -117,6 +138,7 @@ var Parts = React.createClass({
 
 var SaveBtn = React.createClass({
   handleClick: function() {
+    alert("Changed Saved:"+this.props.saveState);
   },
   render: function() {
     return <Button className="save_btn" onClick={this.handleClick}
@@ -125,11 +147,24 @@ var SaveBtn = React.createClass({
 });
 
 var EditorContents = React.createClass({
+  getInitialState: function(){
+    return {
+      saveState: true
+    };
+  },
+  handleContChange: function() {
+    if (this.state.saveState === false)
+      return ;
+    else 
+      this.setState({
+        saveState: false
+      });
+  },
   render: function() {
     return (
       <div>
-        <SaveBtn/>
-        <Parts parts={this.props.parts}/>
+        <SaveBtn layerId={this.props.layerId} saveState={this.state.saveState}/>
+        <Parts parts={this.props.parts} onContChange={this.handleContChange}/>
       </div>
       );
   }
@@ -193,7 +228,7 @@ var App = React.createClass({
     var contents = <MainGrid layers={this.state.layers}
                               parts={this.state.parts}
                               chapters={this.state.chapters}
-                              layerId={this.state.layerId} />;
+                              layerId={this.props.layerId} />;
     return (
       <html>
         <head>
