@@ -91,4 +91,11 @@ body {
 .save_btn {
     width: 50px;
     margin-bottom: 30px;
+    padding: 2px;
+}
+
+.createlayer_btn{
+    width: 60px;
+    float: right;
+    padding: 2px;
 }

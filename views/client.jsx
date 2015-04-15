@@ -19,7 +19,8 @@ var Grid = bootstrap.Grid,
     Modal = bootstrap.Modal,
     ModalTrigger = bootstrap.ModalTrigger,
     Glyphicon = bootstrap.Glyphicon,
-    Input = bootstrap.Input;
+    Input = bootstrap.Input,
+    Alert = bootstrap.Alert;
 
 var NavWelcome = React.createClass({
   render : function() {
@@ -39,18 +40,44 @@ var NavWelcome = React.createClass({
   }
 });
 
+// var myAltr = React.createClass({
+//   render : function(){
+//     return(
+//       <Alert bsStyle='danger'>
+//         <h4>No</h4>
+//       </Alert>
+//       );
+//   }
+// });
+
 var NewLayerModal = React.createClass({
+  getInitialState: function() {
+        return {
+            value: ""
+        };
+  },
+  onChange: function(event) {
+        this.setState({ value: event.target.value });
+  },
+  createLayer : function(){
+    name = this.state.value;
+    if(name === ""){
+      alert ("Please Enter the Name of the new Layer");
+    }
+    alert (name);
+  },
   render : function(){
   return(
   <Modal {...this.props} bsStyle='primary' title='Add Layer' animation={false}>
     <div className='modal-body'>
-      You will create a new layer from Layer: {this.props.name}
+      You will create a new layer from layer {this.props.name}
       <br/>
       <br/>
-      <Input type='text' label='New Layer Name' placeholder='Enter name' />
+      <Input type='text' label='New Layer Name' placeholder='Enter name' 
+              value={this.state.value} onChange={this.onChange} />
     </div>
     <div className='modal-footer'>
-      <Button>Create</Button>
+      <Button onClick={this.createLayer}>Create</Button>
     </div>
   </Modal>
   );
@@ -92,7 +119,7 @@ var ContHeading = React.createClass({
   },
   handleChange: function(event) {
     this.setState({value: event.target.value});
-    this.props.onSaveChange();
+    this.props.onContChange();
   },
   render: function(){
     var value = this.state.value;
@@ -106,7 +133,7 @@ var ContPart = React.createClass({
   },
   handleChange: function(event) {
     this.setState({value: event.target.value});
-    this.props.onSaveChange();
+    this.props.onContChange();
   },
   render: function(){
     var value = this.state.value;
@@ -125,9 +152,9 @@ var Parts = React.createClass({
                          data-key={p.key}
                          className="layer-anchor"></span>;
           } else if (p.heading) {
-            return <ContHeading key={p.key} p={p} onSaveChange={onContChange}/>;
+            return <ContHeading key={p.key} p={p} onContChange={onContChange}/>;
           } else {
-            return <ContPart key={p.key} p={p} onSaveChange={onContChange}/>;
+            return <ContPart key={p.key} p={p} onContChange={onContChange}/>;
           }
           })
         }
@@ -142,7 +169,7 @@ var SaveBtn = React.createClass({
   },
   render: function() {
     return <Button className="save_btn" onClick={this.handleClick}
-                    bsSize="small" bsStyle="primary" block>Save</Button> ;
+                     bsStyle="primary" block>Save</Button> ;
   }
 });
 
