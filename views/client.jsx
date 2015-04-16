@@ -114,30 +114,24 @@ var Layers = React.createClass({
 });
 
 var ContHeading = React.createClass({
-  getInitialState: function(){
-    return {value: this.props.content};
-  },
   handleChange: function(event) {
-    this.setState({value: event.target.value});
-    this.props.onContChange();
+    var item = {"key": this.props.p.key,
+                "contents": event.target.value};
+    this.props.onContChange(item);
   },
   render: function(){
-    var value = this.state.value;
-    return <Input type='text' className="heading-edit" id={value} value={value} onChange={this.handleChange} />;
+    return <Input type='text' className="heading-edit" defaultValue={this.props.p.contents} onChange={this.handleChange} />;
   }
 });
 
 var ContPart = React.createClass({
-  getInitialState: function(){
-    return {value: this.props.content};
-  },
   handleChange: function(event) {
-    this.setState({value: event.target.value});
-    this.props.onContChange();
+    var item = {"key": this.props.p.key,
+                "contents": event.target.value};
+    this.props.onContChange(item);
   },
   render: function(){
-    var value = this.state.value;
-    return <Textarea className="part-edit" value={value} onChange={this.handleChange} />;
+    return <Textarea className="part-edit" defaultValue={this.props.p.contents} onChange={this.handleChange} />;
   }
 });
 
@@ -146,17 +140,17 @@ var Parts = React.createClass({
     var onContChange = this.props.onContChange;
       return (
         <div id="edition-div">{
-          this.props.contents.map(function(p){
-          if (p.type === "anchor") {
-            return <span id={"anchor"+p.id}
-                         data-key={p.id}
+          this.props.parts.map(function(p){
+          if (!p.contents) {
+            return <span id={"anchor"+p.key}
+                         data-key={p.key}
                          className="layer-anchor"></span>;
-          } else if (p.type === "heading") {
-            return <ContHeading data-key={p.id} content={p.content} onContChange={onContChange}/>;
+          } else if (p.heading) {
+            return <ContHeading key={p.key} p={p} onContChange={onContChange}/>;
           } else {
-            return <ContPart data-key={p.id} content={p.content} onContChange={onContChange}/>;
+            return <ContPart key={p.key} p={p} onContChange={onContChange}/>;
           }
-          })          
+          })
         }
         </div>
       );
@@ -164,68 +158,45 @@ var Parts = React.createClass({
 });
 
 var SaveBtn = React.createClass({
-  handleClick: function() {
-    //alert("Changed Saved:"+this.props.saveState);
-    if (this.props.saveState)
-      return;
-  },
   render: function() {
-    return <Button className="save_btn" onClick={this.handleClick}
+    return <Button className="save_btn" onClick={this.props.onClick}
                      bsStyle="primary" block>Save</Button> ;
   }
 });
 
 var EditorContents = React.createClass({
-  loadContentsFromServer: function(){
-    var contentState = [];
-    this.props.parts.map(function(p){
-          if (!p.contents) {
-            var item = {
-              "id": p.key,
-              "type": "anchor",
-              "content": ""};
-            contentState.push(item);
-          } else if (p.heading) {
-            var item = {
-              "id": p.key,
-              "type": "heading",
-              "content": p.contents
-            };
-            contentState.push(item);
-          } else {
-            var item = {
-              "id": p.key,
-              "type": "part",
-              "content": p.contents
-            };
-            contentState.push(item);
-          }
-    });
-    this.setState({contents: contentState});
-  },
   getInitialState: function(){
     return {
       saveState: true,
-      contents: []
+      parts: this.props.parts
     };
   },
-  componentDidMount: function() {
-    this.loadContentsFromServer();
+  itemChange: function(parts, item){
+    for (var i=0; i<parts.length; i++) {
+      if (parts[i].key === item.key) {
+          parts[i].contents = item.contents;
+          break;
+      }
+    }
+    return JSON.parse(parts);
+    //return item;    
   },
-  handleContChange: function() {
-    if (this.state.saveState === false)
-      return ;
-    else 
-      this.setState({
-        saveState: false
+  handleContChange: function(item) {
+    var newParts = this.itemChange(this.state.parts, item);
+    this.setState({
+        saveState: false,
+        parts: newParts
       });
+  },
+  handleClick: function() {
+    alert("Changed Saved: "+this.state.saveState+JSON.stringify(this.state.parts));
   },
   render: function() {
     return (
       <div>
-        <SaveBtn layerId={this.props.layerId} saveState={this.state.saveState}/>
-        <Parts contents={this.state.contents} parts={this.props.parts} onContChange={this.handleContChange} />
-        <p>{this.state.contents}</p>
+        <SaveBtn onClick={this.handleClick} />
+        <Parts parts={this.state.parts} onContChange={this.handleContChange}/>
+        <p>{JSON.stringify(this.state.parts)}</p>
       </div>
       );
   }
