@@ -113,10 +113,36 @@ var Layers = React.createClass({
   }
 });
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 var ContHeading = React.createClass({
   handleChange: function(event) {
     var item = {"key": this.props.p.key,
-                "contents": event.target.value};
+                "contents": event.target.value,
+                "last": event.target.value[event.target.value.length-1]};
     this.props.onContChange(item);
   },
   render: function(){
@@ -127,7 +153,8 @@ var ContHeading = React.createClass({
 var ContPart = React.createClass({
   handleChange: function(event) {
     var item = {"key": this.props.p.key,
-                "contents": event.target.value};
+                "contents": event.target.value,
+                "last": event.target.value[event.target.value.length-1]};
     this.props.onContChange(item);
   },
   render: function(){
@@ -174,12 +201,17 @@ var EditorContents = React.createClass({
   itemChange: function(parts, item){
     for (var i=0; i<parts.length; i++) {
       if (parts[i].key === item.key) {
+        if(item.last !== "\n"){
           parts[i].contents = item.contents;
           break;
+        }
+        else{
+          alert("Got you");
+        }
+            
       }
     }
-    return JSON.parse(parts);
-    //return item;    
+    return parts;    
   },
   handleContChange: function(item) {
     var newParts = this.itemChange(this.state.parts, item);
@@ -189,7 +221,11 @@ var EditorContents = React.createClass({
       });
   },
   handleClick: function() {
-    alert("Changed Saved: "+this.state.saveState+JSON.stringify(this.state.parts));
+    //alert("Changed Saved: "+this.state.saveState+JSON.stringify(newParts));
+    var xhr = new XMLHttpRequest;
+    xhr.open("POST", "/api/parts/"+this.props.layerId);
+    xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    xhr.send(JSON.stringify(this.state.parts));
   },
   render: function() {
     return (
@@ -201,6 +237,40 @@ var EditorContents = React.createClass({
       );
   }
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 var Chapters = React.createClass({
   render : function() {
