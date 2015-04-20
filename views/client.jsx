@@ -143,13 +143,17 @@ var ContHeading = React.createClass({
   handleChange: function(event) {
     var item = {"key": this.props.p.key,
                 "contents": event.target.value,
-                "last": event.target.value[event.target.value.length-1]};
+                "last": event.target.value[event.target.value.length-1]
+              };
     this.props.onContChange(item);
+  },
+  hanleKeyUp: function(event) {
+    this.props.onKeyUp(event,this.props.p.key);
   },
   render: function(){
     var value = this.props.p.contents;
-    return <Textarea className="heading-edit" value={value} 
-                      ref="input" onChange={this.handleChange} />;
+    return <Textarea className="heading-edit" value={value} onChange={this.handleChange}
+                      ref="input" onKeyUp={this.hanleKeyUp}/>;
   }
 });
 
@@ -160,16 +164,20 @@ var ContPart = React.createClass({
                 "last": event.target.value[event.target.value.length-1]};
     this.props.onContChange(item);
   },
+  hanleKeyUp: function(event) {
+    this.props.onKeyUp(event,this.props.p.key);
+  },
   render: function(){
     var value = this.props.p.contents;
-    return <Textarea className="part-edit" value={value} 
-                      ref="input" onChange={this.handleChange} />;
+    return <Textarea className="part-edit" value={value} onChange={this.handleChange}
+                      ref="input" onKeyUp={this.hanleKeyUp}/>;
   }
 });
 
 var Parts = React.createClass({
   render : function() {
     var onContChange = this.props.onContChange;
+    var onKeyUp = this.props.onKeyUp;
       return (
         <div id="edition-div">{
           this.props.parts.map(function(p){
@@ -177,9 +185,9 @@ var Parts = React.createClass({
             return <span id={"anchor"+p.key} ref={p.key}
                          className="layer-anchor"></span>;
           } else if (p.heading) {
-            return <ContHeading key={p.key} ref={'child'+ p.key} p={p} onContChange={onContChange}/>;
+            return <ContHeading key={p.key} ref={'child'+ p.key} p={p} onContChange={onContChange} onKeyUp={onKeyUp}/>;
           } else {
-            return <ContPart key={p.key} ref={'child'+ p.key} p={p} onContChange={onContChange}/>;
+            return <ContPart key={p.key} ref={'child'+ p.key} p={p} onContChange={onContChange} onKeyUp={onKeyUp}/>;
           }
           })
         }
@@ -264,16 +272,46 @@ var EditorContents = React.createClass({
   handleContChange: function(item) {
     var newChange = this.itemChange(this.state.partFocus, this.state.parts, item);
     var newParts = newChange.parts;
-    var addPartKey = newChange.addPartKey;
+    var newFocus = newChange.addPartKey;
     this.setState({
         saveState: false,
         parts: newParts,
-        partFocus: addPartKey
+        partFocus: newFocus
+      });
+  },
+  hanleKeyUp: function(event, key) {
+    var oldParts = this.state.parts;
+    var newParts = this.state.parts;
+    var newFocus = key;
+    var lastkey = oldParts.length-1;
+    if (event.keyCode === 8 && event.target.value === "") {      
+      if (key === oldParts[lastkey].key){
+        newParts = oldParts.slice(0,lastkey-1);
+        newFocus = oldParts[lastkey-2].key;
+      }
+      else{
+        var delpart =0;
+        for (var i=0; i<=lastkey; i++) {
+            if (oldParts[i].key === key) {
+              delpart = i;
+              break;
+            }
+        }
+        newFocus = oldParts[delpart-2].key;
+        var beforeParts = oldParts.slice(0,delpart);
+        var afterParts = oldParts.slice(delpart+1,lastkey+1);
+        newParts = beforeParts.concat(afterParts);        
+      }
+    }
+    this.setState({
+        saveState: false,
+        parts: newParts,
+        partFocus: newFocus
       });
   },
   componentDidUpdate: function(){
    this.handleFocus(this.state.partFocus);
-  } ,
+  },
   handleClick: function() {
     var xhr = new XMLHttpRequest;
     xhr.open("POST", "/api/parts/"+this.props.layerId);
@@ -284,7 +322,7 @@ var EditorContents = React.createClass({
     return (
       <div>
         <SaveBtn onClick={this.handleClick} />
-        <Parts parts={this.state.parts} onContChange={this.handleContChange} ref="parent"/>
+        <Parts parts={this.state.parts} onKeyUp={this.hanleKeyUp} onContChange={this.handleContChange} ref="parent"/>
         <p>{JSON.stringify(this.state.partFocus)}</p>
         <p>{JSON.stringify(this.state.parts)}</p>
 
