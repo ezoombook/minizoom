@@ -4,6 +4,7 @@
 var React       = require('react');
 var superagent  = require('superagent');
 var bootstrap = require('react-bootstrap');
+var partKey = require('../parts').PartKey; 
 var Textarea = require('react-textarea-autosize');
 
 var Grid = bootstrap.Grid,
@@ -146,7 +147,9 @@ var ContHeading = React.createClass({
     this.props.onContChange(item);
   },
   render: function(){
-    return <Input type='text' className="heading-edit" defaultValue={this.props.p.contents} onChange={this.handleChange} />;
+    var value = this.props.p.contents;
+    return <Textarea className="heading-edit" value={value} 
+                      ref="input" onChange={this.handleChange} />;
   }
 });
 
@@ -158,7 +161,9 @@ var ContPart = React.createClass({
     this.props.onContChange(item);
   },
   render: function(){
-    return <Textarea className="part-edit" defaultValue={this.props.p.contents} onChange={this.handleChange} />;
+    var value = this.props.p.contents;
+    return <Textarea className="part-edit" value={value} 
+                      ref="input" onChange={this.handleChange} />;
   }
 });
 
@@ -168,14 +173,13 @@ var Parts = React.createClass({
       return (
         <div id="edition-div">{
           this.props.parts.map(function(p){
-          if (!p.contents) {
-            return <span id={"anchor"+p.key}
-                         data-key={p.key}
+          if (p.contents === null) {
+            return <span id={"anchor"+p.key} ref={p.key}
                          className="layer-anchor"></span>;
           } else if (p.heading) {
-            return <ContHeading key={p.key} p={p} onContChange={onContChange}/>;
+            return <ContHeading key={p.key} ref={'child'+ p.key} p={p} onContChange={onContChange}/>;
           } else {
-            return <ContPart key={p.key} p={p} onContChange={onContChange}/>;
+            return <ContPart key={p.key} ref={'child'+ p.key} p={p} onContChange={onContChange}/>;
           }
           })
         }
@@ -195,10 +199,12 @@ var EditorContents = React.createClass({
   getInitialState: function(){
     return {
       saveState: true,
-      parts: this.props.parts
+      parts: this.props.parts,
+      partFocus: null
     };
   },
-  itemChange: function(parts, item){
+  itemChange: function(partFocus, parts, item){
+    var focusKey = item.key;
     for (var i=0; i<parts.length; i++) {
       if (parts[i].key === item.key) {
         if(item.last !== "\n"){
@@ -206,22 +212,69 @@ var EditorContents = React.createClass({
           break;
         }
         else{
-          alert("Got you");
+          if(i === parts.length-1){
+            var newAnchorKey = partKey.after(parts[i].key);
+            var addAnchor = { "key": newAnchorKey,
+                              "layer": parts[i].layer,
+                              "contents": null,
+                              "heading": null};
+            parts.push(addAnchor);
+            focusKey = partKey.after(newAnchorKey);
+            var addPart = { "key": focusKey,
+                            "layer": addAnchor.layer,
+                            "contents": "",
+                            "heading": null};
+            parts.push(addPart);
+          }
+          else{
+            var beforeNew = parts.slice(0,i+1);
+            var afterNew = parts.slice(i+1,parts.length);
+            var newKeys = partKey.between(parts[i].key, parts[i+1].key, 2);
+
+            var newAnchorKey = newKeys[0];
+            var addAnchor = { "key": newAnchorKey,
+                              "layer": parts[i].layer,
+                              "contents": null,
+                              "heading": null};    
+
+            focusKey = newKeys[1];
+            var addPart = { "key": focusKey,
+                            "layer": addAnchor.layer,
+                            "contents": "",
+                            "heading": null};
+            
+            beforeNew.push(addAnchor);  
+            beforeNew.push(addPart);
+            parts = beforeNew.concat(afterNew);
+          }
         }
             
       }
     }
-    return parts;    
+    return { "parts": parts,
+             "addPartKey": focusKey};    
   },
+  handleFocus: function(key) {
+        var parent = this.refs.parent;
+        var child = parent.refs['child' + key];
+        if (!child) return;
+        var input = child.refs.input;
+        input.getDOMNode().focus();
+    },
   handleContChange: function(item) {
-    var newParts = this.itemChange(this.state.parts, item);
+    var newChange = this.itemChange(this.state.partFocus, this.state.parts, item);
+    var newParts = newChange.parts;
+    var addPartKey = newChange.addPartKey;
     this.setState({
         saveState: false,
-        parts: newParts
+        parts: newParts,
+        partFocus: addPartKey
       });
   },
+  componentDidUpdate: function(){
+   this.handleFocus(this.state.partFocus);
+  } ,
   handleClick: function() {
-    //alert("Changed Saved: "+this.state.saveState+JSON.stringify(newParts));
     var xhr = new XMLHttpRequest;
     xhr.open("POST", "/api/parts/"+this.props.layerId);
     xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
@@ -231,8 +284,10 @@ var EditorContents = React.createClass({
     return (
       <div>
         <SaveBtn onClick={this.handleClick} />
-        <Parts parts={this.state.parts} onContChange={this.handleContChange}/>
+        <Parts parts={this.state.parts} onContChange={this.handleContChange} ref="parent"/>
+        <p>{JSON.stringify(this.state.partFocus)}</p>
         <p>{JSON.stringify(this.state.parts)}</p>
+
       </div>
       );
   }
