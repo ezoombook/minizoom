@@ -16,7 +16,8 @@ exports.edit = function renderApp(req, res, next) {
     bookId: bookId,
     chapters: [],
     layers: [],
-    parts: []
+    parts: [],
+    initParts: []
   };
   dbAPI.getChapters(layerId).then(function(chap) {
     initialState.chapters = chap;
@@ -26,6 +27,7 @@ exports.edit = function renderApp(req, res, next) {
     return dbAPI.getPartsInLayer(layerId);
   }).then(function(parts){
     initialState.parts = parts;
+    initialState.initParts = parts;
     var app = React.createElement(App, {initialState: initialState});
     res.send("<!doctype html>\n" + 
         React.renderToString(app) +
