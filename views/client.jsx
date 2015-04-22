@@ -114,31 +114,6 @@ var Layers = React.createClass({
   }
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 var ContHeading = React.createClass({
   handleChange: function(event) {
     var item = {"key": this.props.p.key,
@@ -239,35 +214,24 @@ var EditorContents = React.createClass({
       var lastposition = newPosition[newPosition.length-1];
       var newcontents = item.contents.slice( lastposition+1, item.contents.length);
       newContents.push(newcontents);
-
-      alert(n);
-      alert(JSON.stringify(newPosition));
-      alert(JSON.stringify(newContents));
-
       parts[n].contents = newContents[0];
-
       if(n === parts.length-1) {
-        alert("last");
         for(var i=1; i<newContents.length; i++) {
-          alert(i);
           var newAnchorKey = partKey.after(parts[parts.length-1].key);
           var addAnchor = { "key": newAnchorKey,
                               "layer": parts[n].layer,
                               "contents": null,
                               "heading": null}; 
           parts.push(addAnchor);
-          alert("add anchor");
           focusKey = partKey.after(newAnchorKey);
           var addPart = { "key": focusKey,
                             "layer": addAnchor.layer,
                             "contents": newContents[i],
                             "heading": null};
           parts.push(addPart);
-          alert("add part");
         }
 
       }else{
-        alert("not last");
         var beforeNew = parts.slice(0,n+1);
         var afterNew = parts.slice(n+1,parts.length);
         var newKeys = partKey.between(parts[n].key, parts[n+1].key, 2*newPosition.length);
@@ -368,7 +332,6 @@ var EditorContents = React.createClass({
               changedParts.push(part);                       
             }              
           }
-          //alert("Finish match comparison");
           continue;
         }
         //Finish find of part[i]
@@ -381,14 +344,41 @@ var EditorContents = React.createClass({
     }
     return changedParts;
   },
+  handleDeletedParts: function(){
+    var initParts = this.props.initParts;
+    var deletedParts = this.state.deletedParts;
+    var noParts = [];
+    //alert(JSON.stringify(deletedParts));
+    if(this.state.deletedParts.length !== 0){
+      for(var i=0; i<deletedParts.length; i++){
+        alert("deletedParts"+i);
+        var found = false;
+        for(var j=0; j<initParts.length; j++){
+          if(deletedParts[i] === initParts[j].key){
+            found = true;
+          }
+        }
+        if(found) continue;
+        noParts.push(i);         
+      }
+      alert(noParts);
+      for(var i=0; i<noParts.length; i++) {
+        deletedParts.splice(noParts[i]-i, 1);
+      }
+    }
+    alert(deletedParts);
+    //return deletedParts;
+  },
   handleClick: function() {
     var changedParts = this.handleChangedParts();
-    var deletedParts = this.state.deletedParts;
-    var xhr = new XMLHttpRequest;
-    xhr.open("POST", "/api/parts/"+this.props.layerId);
-    xhr.send(htmlParts);
-    //alert("Final "+ JSON.stringify(changedParts) );
-    //alert("Delete"+ JSON.stringify( ));
+    var deletedParts = this.handleDeletedParts();
+    alert("Final "+ JSON.stringify(changedParts));
+    alert("Delete"+ JSON.stringify(deletedParts));
+    //var xhr = new XMLHttpRequest;
+    //xhr.open("POST", "/api/parts/"+this.props.layerId);
+    //xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    // xhr.send(changedParts);
+    // xhr.send(deletedParts);
   },
   render: function() {
     return (
@@ -402,19 +392,6 @@ var EditorContents = React.createClass({
       );
   }
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 var Chapters = React.createClass({
   render : function() {
