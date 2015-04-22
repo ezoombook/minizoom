@@ -301,7 +301,8 @@ var EditorContents = React.createClass({
           var afterParts = oldParts.slice(delpart+1,lastkey+1);
           newParts = beforeParts.concat(afterParts);     
         }            
-      // }else{
+       }
+      //else{
       //   var sel = document.getSelection();
       //   alert(sel);
       //   if (sel.focusOffset === sel.anchorOffset &&
@@ -316,6 +317,7 @@ var EditorContents = React.createClass({
       //   }
 
       // }      
+    //}
     }
     this.setState({
         saveState: false,
@@ -363,10 +365,8 @@ var EditorContents = React.createClass({
     var initParts = this.props.initParts;
     var deletedParts = this.state.deletedParts;
     var noParts = [];
-    //alert(JSON.stringify(deletedParts));
     if(this.state.deletedParts.length !== 0){
       for(var i=0; i<deletedParts.length; i++){
-        alert("deletedParts"+i);
         var found = false;
         for(var j=0; j<initParts.length; j++){
           if(deletedParts[i] === initParts[j].key){
@@ -376,24 +376,24 @@ var EditorContents = React.createClass({
         if(found) continue;
         noParts.push(i);         
       }
-      alert(noParts);
       for(var i=0; i<noParts.length; i++) {
         deletedParts.splice(noParts[i]-i, 1);
       }
     }
-    alert(deletedParts);
-    //return deletedParts;
+    return deletedParts;
   },
   handleClick: function() {
-    var changedParts = this.handleChangedParts();
-    var deletedParts = this.handleDeletedParts();
-    alert("Final "+ JSON.stringify(changedParts));
-    alert("Delete"+ JSON.stringify(deletedParts));
-    //var xhr = new XMLHttpRequest;
-    //xhr.open("POST", "/api/parts/"+this.props.layerId);
-    //xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-    // xhr.send(changedParts);
-    // xhr.send(deletedParts);
+    //var changedParts = this.handleChangedParts();
+    //var deletedParts = this.handleDeletedParts();
+    //alert("Final "+ JSON.stringify(changedParts));
+    //alert("Delete"+ JSON.stringify(deletedParts));
+    var xhr = new XMLHttpRequest;
+    xhr.open("POST", "/api/parts/"+this.props.layerId);
+    xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    var data = {  "changedParts": this.handleChangedParts(),
+                  "deletedParts": this.handleDeletedParts()};
+    xhr.send(JSON.stringify(data));
+    //xhr.send(deletedParts);
   },
   render: function() {
     return (
