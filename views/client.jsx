@@ -280,27 +280,42 @@ var EditorContents = React.createClass({
     var newFocus = key;
     var newdeletedParts = this.state.deletedParts;
     var lastkey = oldParts.length-1;
-    if (event.keyCode === 8 && event.target.value === "") {      
-      if (key === oldParts[lastkey].key){
-        newdeletedParts.push(key);
-        newdeletedParts.push(oldParts[lastkey-1].key);
-        newParts = oldParts.slice(0,lastkey-1);
-        newFocus = oldParts[lastkey-2].key;
-      }
-      else{
-        var delpart =0;
-        for (var i=0; i<=lastkey; i++) {
+    if (event.keyCode === 8) {
+      if(event.target.value === ""){
+        if (key === oldParts[lastkey].key){
+          newdeletedParts.push(key);
+          newdeletedParts.push(oldParts[lastkey-1].key);
+          newParts = oldParts.slice(0,lastkey-1);
+          newFocus = oldParts[lastkey-2].key;
+        }else{
+          var delpart =0;
+          for (var i=0; i<=lastkey; i++) {
             if (oldParts[i].key === key) {
               delpart = i;
               break;
             }
-        }
-        newdeletedParts.push(key);
-        newFocus = oldParts[delpart-2].key;
-        var beforeParts = oldParts.slice(0,delpart);
-        var afterParts = oldParts.slice(delpart+1,lastkey+1);
-        newParts = beforeParts.concat(afterParts);     
-      }
+          }
+          newdeletedParts.push(key);
+          newFocus = oldParts[delpart-2].key;
+          var beforeParts = oldParts.slice(0,delpart);
+          var afterParts = oldParts.slice(delpart+1,lastkey+1);
+          newParts = beforeParts.concat(afterParts);     
+        }            
+      // }else{
+      //   var sel = document.getSelection();
+      //   alert(sel);
+      //   if (sel.focusOffset === sel.anchorOffset &&
+      //     sel.focusOffset === 0 &&
+      //     sel.anchorNode === sel.focusNode){
+      //             for (var i=0; i<=lastkey; i++) {
+      //     if (oldParts[i].key === key) {
+      //       newFocus = oldParts[i-2].key;
+      //       break;
+      //     }
+      //   }
+      //   }
+
+      // }      
     }
     this.setState({
         saveState: false,
