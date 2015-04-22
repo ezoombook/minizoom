@@ -291,7 +291,7 @@ var EditorContents = React.createClass({
     if (event.keyCode === 8 && event.target.value === "") {      
       if (key === oldParts[lastkey].key){
         newdeletedParts.push(key);
-        newdeletedParts.push(oldParts[lastkey-1]);
+        newdeletedParts.push(oldParts[lastkey-1].key);
         newParts = oldParts.slice(0,lastkey-1);
         newFocus = oldParts[lastkey-2].key;
       }
@@ -321,44 +321,29 @@ var EditorContents = React.createClass({
     this.handleFocus(this.state.partFocus);
   },
   handleClick: function() {
-    // var parent = this.refs.parent;
-    // var child = parent.refs['child' + key];
-    // if (!child) return;
-    // var input = child.refs.input;
-    // input.getDOMNode().focus();
-    // var newFocus
-    // this.setState({
-    //     partFocus: newFocus
-    //   });
     var changedParts = [];
-    alert("ins");
     if(!this.state.saveState){
-      alert("in");
       var initParts = this.props.initParts;
       var parts = this.state.parts;
       //Find part[i]
       for(var i=0; i<parts.length; i++){
-        alert("Begin "+i);
         var found = false;
         //Begin to find in initParts
         for(var j=0; j<initParts.length; j++){
           //Fix the initPart j
-          if(parts[i].key === initParts[j].key){
+          if(parts[i].key === initParts[j].key ){
             found = true;
-            alert("Find "+i);
             //if not equal
             if(parts[i].contents!== initParts[j].contents){//Maybe heading will be change?
               var part = {"key": parts[i].key,
                           "contents": parts[i].contents};
-              changedParts.push(part);
-              alert("Add "+JSON.stringify(changedParts));                       
+              changedParts.push(part);                       
             }              
           }
           //alert("Finish match comparison");
           continue;
         }
         //Finish find of part[i]
-        alert(found);
         if(!found){
           var part = {"key": parts[i].key,
                       "contents": parts[i].contents};
@@ -367,20 +352,16 @@ var EditorContents = React.createClass({
       }
     }
     alert("Final "+ JSON.stringify(changedParts) );
-  },
-  handleTest: function() {
-    alert("cd");
+    alert("Delete"+ JSON.stringify(this.state.deletedParts ));
   },
   render: function() {
     return (
       <div>
         <SaveBtn onClick={this.handleClick} />
-        <Button onClick={this.handleTest}>Hi</Button>
         <Parts ref="parent" id="partext" parts={this.state.parts} onKeyUp={this.hanleKeyUp} 
                             onContChange={this.handleContChange} />
         <p>{JSON.stringify(this.state.partFocus)}</p>
         <p>{JSON.stringify(this.state.parts)}</p>
-
       </div>
       );
   }
