@@ -216,52 +216,80 @@ var EditorContents = React.createClass({
   },
   itemChange: function(partFocus, parts, item){
     var focusKey = item.key;
-    for (var i=0; i<parts.length; i++) {
+    var newPosition = [];
+    var newContents = [];
+    var n = 0;
+    for (var i=0; i<parts.length; i++) {      
       if (parts[i].key === item.key) {
-        if(item.last !== "\n"){
-          parts[i].contents = item.contents;
-          break;
-        }
-        else{
-          if(i === parts.length-1){
-            var newAnchorKey = partKey.after(parts[i].key);
-            var addAnchor = { "key": newAnchorKey,
-                              "layer": parts[i].layer,
-                              "contents": null,
-                              "heading": null};
-            parts.push(addAnchor);
-            focusKey = partKey.after(newAnchorKey);
-            var addPart = { "key": focusKey,
-                            "layer": addAnchor.layer,
-                            "contents": "",
-                            "heading": null};
-            parts.push(addPart);
-          }
-          else{
-            var beforeNew = parts.slice(0,i+1);
-            var afterNew = parts.slice(i+1,parts.length);
-            var newKeys = partKey.between(parts[i].key, parts[i+1].key, 2);
-
-            var newAnchorKey = newKeys[0];
-            var addAnchor = { "key": newAnchorKey,
-                              "layer": parts[i].layer,
-                              "contents": null,
-                              "heading": null};    
-
-            focusKey = newKeys[1];
-            var addPart = { "key": focusKey,
-                            "layer": addAnchor.layer,
-                            "contents": "",
-                            "heading": null};
-            
-            beforeNew.push(addAnchor);  
-            beforeNew.push(addPart);
-            parts = beforeNew.concat(afterNew);
-          }
-        }
-            
+        n = i;
+        break;
       }
     }
+    for(var j=0; j<item.contents.length; j++) {
+      if(item.contents[j] === "\n"){
+        newPosition.push(j);
+      }
+    }
+    if(newPosition.length !== 0){
+      newContents.push(item.contents.slice(0,newPosition[0]));
+      for(var j=1; j<newPosition.length; j++) {
+        var newcontents = item.contents.slice( newPosition[j-1]+1, newPosition[j] );
+        newContents.push(newcontents);
+      }
+      var lastposition = newPosition[newPosition.length-1];
+      var newcontents = item.contents.slice( lastposition+1, item.contents.length);
+      newContents.push(newcontents);
+
+      alert(n);
+      alert(JSON.stringify(newPosition));
+      alert(JSON.stringify(newContents));
+
+      parts[n].contents = newContents[0];
+
+      if(n === parts.length-1) {
+        alert("last");
+        for(var i=1; i<newContents.length; i++) {
+          alert(i);
+          var newAnchorKey = partKey.after(parts[parts.length-1].key);
+          var addAnchor = { "key": newAnchorKey,
+                              "layer": parts[n].layer,
+                              "contents": null,
+                              "heading": null}; 
+          parts.push(addAnchor);
+          alert("add anchor");
+          focusKey = partKey.after(newAnchorKey);
+          var addPart = { "key": focusKey,
+                            "layer": addAnchor.layer,
+                            "contents": newContents[i],
+                            "heading": null};
+          parts.push(addPart);
+          alert("add part");
+        }
+
+      }else{
+        alert("not last");
+        var beforeNew = parts.slice(0,n+1);
+        var afterNew = parts.slice(n+1,parts.length);
+        var newKeys = partKey.between(parts[n].key, parts[n+1].key, 2*newPosition.length);
+        for(var i=1; i<newContents.length; i++) {
+          var newAnchorKey = newKeys[2*i-2];
+          var addAnchor = { "key": newAnchorKey,
+                              "layer": parts[n].layer,
+                              "contents": null,
+                              "heading": null}; 
+          beforeNew.push(addAnchor);
+          focusKey = newKeys[2*i-1];
+          var addPart = { "key": focusKey,
+                            "layer": addAnchor.layer,
+                            "contents": newContents[i],
+                            "heading": null};
+          beforeNew.push(addPart);
+        }
+        parts = beforeNew.concat(afterNew);
+      }
+    }else{
+      parts[n].contents = item.contents;
+    }            
     return { "parts": parts,
              "focusKey": focusKey};    
   },
@@ -320,7 +348,7 @@ var EditorContents = React.createClass({
   componentDidUpdate: function(){
     this.handleFocus(this.state.partFocus);
   },
-  handleClick: function() {
+  handleChangedParts: function(){
     var changedParts = [];
     if(!this.state.saveState){
       var initParts = this.props.initParts;
@@ -351,8 +379,16 @@ var EditorContents = React.createClass({
         }      
       }
     }
-    alert("Final "+ JSON.stringify(changedParts) );
-    alert("Delete"+ JSON.stringify(this.state.deletedParts ));
+    return changedParts;
+  },
+  handleClick: function() {
+    var changedParts = this.handleChangedParts();
+    var deletedParts = this.state.deletedParts;
+    var xhr = new XMLHttpRequest;
+    xhr.open("POST", "/api/parts/"+this.props.layerId);
+    xhr.send(htmlParts);
+    //alert("Final "+ JSON.stringify(changedParts) );
+    //alert("Delete"+ JSON.stringify( ));
   },
   render: function() {
     return (
