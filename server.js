@@ -10,8 +10,13 @@ var nodejsx     = require('node-jsx').install();
 var routes = require('./routes');
 var client = require('./routes/client');
 var book = require('./routes/book');
+var test = require('./routes/test');
 var importer    = require('./import/html');
 var dbAPI       = new (require("./database"));
+var parts = require('./parts');
+var bodyParser = require('body-parser');
+var util = require('util');
+var JSONStream = require('JSONStream');
 
 var development = process.env.NODE_ENV !== 'production';
 
@@ -31,6 +36,8 @@ function dbResponse(params, dbAPIMethod) {
 }
 
 var api = express()
+  .use(bodyParser.json())
+  .use(bodyParser.urlencoded({ extended: true }))
   .get("/layers", dbResponse(["bookId"], "getLayers"))
   // .post("/newlayers/:layerId", function(req, res, next){
   //   dbAPI.addLayer(layer, originalLayer)
@@ -48,11 +55,44 @@ var api = express()
     });
     stream.on("end", function(){res.end()});
   })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   .post("/parts/:layerId", function(req, res, next){
-    // var partsStream = req.pipe(importer.HTMLToParts()).pipe(importer.KeyCorrector());
+    //console.log(req.body);
+    var changedParts = req.body.changedParts;
+    var deletedParts = req.body.deletedParts;
+    console.log(changedParts);
+    console.log(deletedParts);
+    //var stream = new (require("stream").);
+    //console.log(req.body);
+
+    // var partsStream = new (require("stream"));
+    // partsStream._writableState.objectMode = true;
+    // partsStream._readableState.objectMode = true;
+
+    // req.body.map(function(r){
+    //   console.log(r);
+    //   partsStream.write(r);
+    // });
+    // partsStream.end();
+    // console.log(partsStream);
+
 
     // dbAPI.addChapter(partsStream, req.params.layerId)
-    //   .then(function(r) {
+    // .then(function(r) {
     //     res.end({success:true});
     //     next();
     //   },
@@ -60,9 +100,34 @@ var api = express()
     //     console.log("Error while saving parts", err);
     //     res.end({success:false, error:err});
     //     next();
-    //   });
-  
+    //    });
+
   });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 if (development) {
   app.get('/assets/bundle.js', function(req, res) {
@@ -82,6 +147,7 @@ app
   .use('/api', api)
   .use('/book/:bookId/:layerId', client.edit)
   .use('/books',book.list)
+  .use('/test', test.test)
   .use('/', routes.index)
   .listen(3000, function() {
     console.log('Point your browser at http://localhost:3000');
