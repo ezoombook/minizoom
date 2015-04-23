@@ -215,24 +215,36 @@ var EditorContents = React.createClass({
       var newcontents = item.contents.slice( lastposition+1, item.contents.length);
       newContents.push(newcontents);
       parts[n].contents = newContents[0];
-      var beforeNew = parts.slice(0,n+1);
-      var afterNew = parts.slice(n+1,parts.length);
-      var newKeys = partKey.between(partKey.parse(parts[n].key), partKey.parse(parts[n+1].key), 2*newPosition.length);
-      for(var i=1; i<newContents.length; i++) {
-        var newAnchorKey = newKeys[2*i-2];
-        var addAnchor = { "key": newAnchorKey.toString(),
+      var addNew = parts.slice(0,n+2);
+      var afterNew = parts.slice(n+2,parts.length);
+      var i = 1;
+      while(parts[n+2*i].contents === null && i<newContents.length) { //Insert part entre two existing anchors
+          focusKey = partKey.betweenTwo(partKey.parse(parts[n+2*i-1].key), partKey.parse(parts[n+2*i].key));
+          var addPart = { "key": focusKey.toString(),
+                          "layer": parts[n].layer,
+                          "contents": newContents[i],
+                          "heading": null};
+          addNew.push(addPart);
+          i++;
+      }
+      if(i<newContents.length){ //Still have new parts to insert
+        var newKeys = partKey.between(partKey.parse(parts[n+2*i-1].key),partKey.parse(parts[n+2*i].key),2*(newContents.length-i));
+        for(var j=i; j<newContents.length; j++) { //Insert new panrts and new anchors
+          focusKey = newKeys[2*i-2];
+          var addPart = { "key": focusKey.toString(),
+                          "layer": parts[n].layer,
+                          "contents": newContents[j],
+                          "heading": null};
+          addNew.push(addPart);
+          var newAnchorKey = newKeys[2*i-1];
+          var addAnchor = { "key": newAnchorKey.toString(),
                             "layer": parts[n].layer,
                             "contents": null,
                             "heading": null}; 
-        beforeNew.push(addAnchor);
-        focusKey = newKeys[2*i-1];
-        var addPart = { "key": focusKey.toString(),
-                          "layer": addAnchor.layer,
-                          "contents": newContents[i],
-                          "heading": null};
-        beforeNew.push(addPart);
-      }
-      parts = beforeNew.concat(afterNew);
+          addNew.push(addAnchor);
+        }
+      }      
+      parts = addNew.concat(afterNew);
     }else{
       parts[n].contents = item.contents;
     }            
@@ -283,7 +295,6 @@ var EditorContents = React.createClass({
           var afterParts = oldParts.slice(delpart+1,oldParts.length);
           if(!found){
             beforeParts = oldParts.slice(0,delpart-1);
-            alert("Delte anchor");
           }            
           newParts = beforeParts.concat(afterParts);                
        }
@@ -316,6 +327,7 @@ var EditorContents = React.createClass({
   },
   handleChangedParts: function(){
     var changedParts = [];
+    var addedParts = [];
     if(!this.state.saveState){
       var initParts = this.props.initParts;
       var parts = this.state.parts;
@@ -340,11 +352,12 @@ var EditorContents = React.createClass({
         if(!found){
           var part = {"key": parts[i].key,
                       "contents": parts[i].contents};
-          changedParts.push(part);
+          addedParts.push(part);
         }      
       }
     }
-    return changedParts;
+    return ({"changedParts": changedParts,
+              "addedParts": addedParts});
   },
   handleDeletedParts: function(){
     var initParts = this.props.initParts;
@@ -371,7 +384,8 @@ var EditorContents = React.createClass({
     var xhr = new XMLHttpRequest;
     xhr.open("POST", "/api/parts/"+this.props.layerId);
     xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-    var data = {  "changedParts": this.handleChangedParts(),
+    var data = {  "changedParts": this.handleChangedParts().changedParts,
+                  "addedParts": this.handleChangedParts().addedParts,
                   "deletedParts": this.handleDeletedParts()};
     xhr.send(JSON.stringify(data));
     //xhr.send(deletedParts);
