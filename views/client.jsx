@@ -261,28 +261,31 @@ var EditorContents = React.createClass({
     var newParts = this.state.parts;
     var newFocus = key;
     var newdeletedParts = this.state.deletedParts;
-    var lastkey = oldParts.length-1;
     if (event.keyCode === 8) {
       if(event.target.value === ""){
-        if (key === oldParts[lastkey].key){
-          newdeletedParts.push(key);
-          newdeletedParts.push(oldParts[lastkey-1].key);
-          newParts = oldParts.slice(0,lastkey-1);
-          newFocus = oldParts[lastkey-2].key;
-        }else{
           var delpart =0;
-          for (var i=0; i<=lastkey; i++) {
+          for (var i=0; i<oldParts.length; i++) {
             if (oldParts[i].key === key) {
               delpart = i;
               break;
             }
           }
           newdeletedParts.push(key);
+          //If the anchor doesn't exist in origin parts, remove it from parts
+          var initParts = this.props.initParts;
+          var found = false;
+          for(var i=0; i<initParts.length; i++){
+            if(initParts[i].key !== oldParts[delpart-1].key) continue;
+            found = true;
+          }
           newFocus = oldParts[delpart-2].key;
           var beforeParts = oldParts.slice(0,delpart);
-          var afterParts = oldParts.slice(delpart+1,lastkey+1);
-          newParts = beforeParts.concat(afterParts);     
-        }            
+          var afterParts = oldParts.slice(delpart+1,oldParts.length);
+          if(!found){
+            beforeParts = oldParts.slice(0,delpart-1);
+            alert("Delte anchor");
+          }            
+          newParts = beforeParts.concat(afterParts);                
        }
       //else{
       //   var sel = document.getSelection();
@@ -365,10 +368,6 @@ var EditorContents = React.createClass({
     return deletedParts;
   },
   handleClick: function() {
-    //var changedParts = this.handleChangedParts();
-    //var deletedParts = this.handleDeletedParts();
-    //alert("Final "+ JSON.stringify(changedParts));
-    //alert("Delete"+ JSON.stringify(deletedParts));
     var xhr = new XMLHttpRequest;
     xhr.open("POST", "/api/parts/"+this.props.layerId);
     xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
@@ -425,7 +424,7 @@ var MainGrid = React.createClass({
             <Col md={2}>
             </Col>
             <Col md={4}>
-              <EditorContents layerId={this.props.layerId} parts={this.props.parts}  initParts={this.props.initParts}/>
+              <EditorContents layerId={this.props.layerId} parts={this.props.parts} initParts={this.props.initParts}/>
             </Col>
             <Col md={2}>
             </Col>
