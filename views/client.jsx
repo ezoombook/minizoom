@@ -215,42 +215,24 @@ var EditorContents = React.createClass({
       var newcontents = item.contents.slice( lastposition+1, item.contents.length);
       newContents.push(newcontents);
       parts[n].contents = newContents[0];
-      if(n === parts.length-1) {
-        for(var i=1; i<newContents.length; i++) {
-          var newAnchorKey = partKey.after(parts[parts.length-1].key);
-          var addAnchor = { "key": newAnchorKey,
-                              "layer": parts[n].layer,
-                              "contents": null,
-                              "heading": null}; 
-          parts.push(addAnchor);
-          focusKey = partKey.after(newAnchorKey);
-          var addPart = { "key": focusKey,
-                            "layer": addAnchor.layer,
-                            "contents": newContents[i],
-                            "heading": null};
-          parts.push(addPart);
-        }
-
-      }else{
-        var beforeNew = parts.slice(0,n+1);
-        var afterNew = parts.slice(n+1,parts.length);
-        var newKeys = partKey.between(parts[n].key, parts[n+1].key, 2*newPosition.length);
-        for(var i=1; i<newContents.length; i++) {
-          var newAnchorKey = newKeys[2*i-2];
-          var addAnchor = { "key": newAnchorKey,
-                              "layer": parts[n].layer,
-                              "contents": null,
-                              "heading": null}; 
-          beforeNew.push(addAnchor);
-          focusKey = newKeys[2*i-1];
-          var addPart = { "key": focusKey,
-                            "layer": addAnchor.layer,
-                            "contents": newContents[i],
-                            "heading": null};
-          beforeNew.push(addPart);
-        }
-        parts = beforeNew.concat(afterNew);
+      var beforeNew = parts.slice(0,n+1);
+      var afterNew = parts.slice(n+1,parts.length);
+      var newKeys = partKey.between(partKey.parse(parts[n].key), partKey.parse(parts[n+1].key), 2*newPosition.length);
+      for(var i=1; i<newContents.length; i++) {
+        var newAnchorKey = newKeys[2*i-2];
+        var addAnchor = { "key": newAnchorKey.toString(),
+                            "layer": parts[n].layer,
+                            "contents": null,
+                            "heading": null}; 
+        beforeNew.push(addAnchor);
+        focusKey = newKeys[2*i-1];
+        var addPart = { "key": focusKey.toString(),
+                          "layer": addAnchor.layer,
+                          "contents": newContents[i],
+                          "heading": null};
+        beforeNew.push(addPart);
       }
+      parts = beforeNew.concat(afterNew);
     }else{
       parts[n].contents = item.contents;
     }            
