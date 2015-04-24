@@ -58,42 +58,19 @@ var api = express()
     var deletedParts = req.body.deletedParts;
     dbAPI.changeParts(addedParts, changedParts, deletedParts, req.params.layerId);
   })
-
-
-
-
-
-
-
-
-
-
-
   .post("/layers/:layerId", function(req, res, next){
     var newLayer = {"name": req.body.newLayerName,
                     "book": req.body.book};
-    var originalLayer = {"id": parseInt(req.params.layerId)};
-    console.log(originalLayer);
-    dbAPI.addLayer(newLayer, originalLayer).then();
+    var originalLayerId = parseInt(req.params.layerId);
+    var originalLayer = {"id": originalLayerId};
+    var newLayerId = 0;
+    dbAPI.addLayer(newLayer, originalLayer).then(function(layerId) {
+      newLayerId = layerId;
+      return dbAPI.getPartsInLayer(originalLayerId);
+    }).then(function(parts) {
+      dbAPI.changeParts(parts,[],[],newLayerId);
+    });       
   });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 if (development) {
   app.get('/assets/bundle.js', function(req, res) {
       res.writeHead(200, {"Content-Type":"text/javascript"});

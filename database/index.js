@@ -32,11 +32,14 @@ Db.prototype.addBook = function (book) {
  * @param originalLayerId - The layer from which this one will be copied
  */
 Db.prototype.addLayer = function (layer, originalLayer) {
-  return this.db("layer").insert({
-    "name"    : layer.name,
-    "parent"  : originalLayer ? originalLayer.id : null,
-    "book"    : layer.book || originalLayer.book
-  });
+  return this.db("layer")
+            .insert({
+                "name"    : layer.name,
+                "parent"  : originalLayer ? originalLayer.id : null,
+                "book"    : layer.book || originalLayer.book
+            })
+            .returning('id')
+            .into('layer');
 };
 
 /**

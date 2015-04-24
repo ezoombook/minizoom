@@ -65,7 +65,6 @@ var NewLayerModal = React.createClass({
     if(name === ""){
       alert ("Please Enter the Name of the new Layer");
     }else{
-      //alert (this.props.layerId);
       var xhr = new XMLHttpRequest;
       xhr.open("POST", "/api/layers/"+this.props.layerId);
       xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
