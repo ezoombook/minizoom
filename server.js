@@ -55,80 +55,12 @@ var api = express()
     });
     stream.on("end", function(){res.end()});
   })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   .post("/parts/:layerId", function(req, res, next){
-    //console.log(req.body);
     var changedParts = req.body.changedParts;
+    var addedParts = req.body.addedParts;
     var deletedParts = req.body.deletedParts;
-    console.log(changedParts);
-    console.log(deletedParts);
-    //var stream = new (require("stream").);
-    //console.log(req.body);
-
-    // var partsStream = new (require("stream"));
-    // partsStream._writableState.objectMode = true;
-    // partsStream._readableState.objectMode = true;
-
-    // req.body.map(function(r){
-    //   console.log(r);
-    //   partsStream.write(r);
-    // });
-    // partsStream.end();
-    // console.log(partsStream);
-
-
-    // dbAPI.addChapter(partsStream, req.params.layerId)
-    // .then(function(r) {
-    //     res.end({success:true});
-    //     next();
-    //   },
-    //   function error(err) {
-    //     console.log("Error while saving parts", err);
-    //     res.end({success:false, error:err});
-    //     next();
-    //    });
-
+    dbAPI.changeParts(addedParts, changedParts, deletedParts, req.params.layerId);
   });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 if (development) {
   app.get('/assets/bundle.js', function(req, res) {
       res.writeHead(200, {"Content-Type":"text/javascript"});

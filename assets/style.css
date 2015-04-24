@@ -70,8 +70,9 @@ body {
   border: 0px;
   text-align: center;
   font-size: 200%;
-  height: 50px;
   box-shadow: 0 0 0;
+  height: 40px; 
+  overflow: hidden;
 }
 
 .part-edit{

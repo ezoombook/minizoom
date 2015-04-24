@@ -136,6 +136,80 @@ Db.prototype._partsInChapter = function(layerId, chapterKey) {
 };
 
 /**
+ * Insert a part in the layer
+ */
+Db.prototype.addParts = function(addedPart, layerId) {
+  return( 
+        this.db("part")
+            .where("layer", layerId)
+            .insert({
+              "key": addedPart.key,
+              "layer": layerId,
+              "contents": addedPart.contents,
+              "heading": null
+            })
+           .orderBy("key")
+  );
+};
+
+/**
+ * Update a part in the layer
+ */
+Db.prototype.updatePart = function(changedPart, layerId) {
+  return(
+        this.db("part")
+            .where("layer", layerId)
+            .where("key", changedPart.key)
+            .update({
+              "contents": changedPart.contents
+            })
+           .orderBy("key")
+  );
+};
+
+/**
+ * Delete a part in the layer
+ */
+Db.prototype.deletePart = function(deletedPart, layerId){
+  return(
+        this.db("part")
+            .where("layer", layerId)
+            .where("key", deletedPart)
+            .del()
+            .orderBy("key")
+  );
+};
+
+/**
+ * Change parts in the database.
+ * @param addedParts - A Json of changed parts
+ * @param changedParts - A Json of changed parts
+ * @param deletedParts - A Json of deleted parts
+ * @param layerId - The id of the layer in which the chapter is
+ */
+Db.prototype.changeParts = function(addedParts, changedParts, deletedParts, layerId) {
+  var self = this;
+  for (var i=0; i<addedParts.length; i++) {
+      //console.log(addedParts[i]);
+      self.addParts(addedParts[i], layerId).then(function(partId){
+        //console.log("ADD "+ i);
+      }) ;
+  }
+  for (var i=0; i<changedParts.length; i++) {
+      //console.log(changedParts[i]);
+      self.updatePart(changedParts[i], layerId).then(function(partId){
+        //console.log("UPDATE "+ partId);
+      }) ;
+  }
+  for (var i=0; i<deletedParts.length; i++) {
+      //console.log(deletedParts[i]);
+      self.deletePart(deletedParts[i], layerId).then(function(num){
+        //console.log("DELETE "+ num);
+      }) ;
+  }
+};
+
+/**
  * Get a stream of all parts with a key such that
  * key >= firstPartKey
  * and key < (the key of the next chapter)
@@ -144,7 +218,7 @@ Db.prototype.getPartsInChapter = function(layerId, firstPartKey) {
   return this._partsInChapter(layerId, firstPartKey)
               .select(["key", "heading", "contents"])
               .pipe(new DbAdapter);
-}
+};
 
 Db.prototype.getPartsInLayer = function (layerId) {
   return this.db("part").where("layer", layerId);
