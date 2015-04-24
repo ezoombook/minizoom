@@ -131,7 +131,10 @@ var Layers = React.createClass({
         <ul>
         {
           this.props.layers.map(function(layer){
-              return <li key={layer.id}><NewLayerTrigger name={layer.name} layerId={layer.id} book={layer.book} /> {layer.name} </li>;
+              return  <li key={layer.id}>
+                        <NewLayerTrigger name={layer.name} layerId={layer.id} book={layer.book} /> 
+                        <a href={'/book/'+layer.book+'/'+layer.id}>{layer.name}</a> 
+                      </li>;
           })
         }
         </ul>        

@@ -149,7 +149,7 @@ Db.prototype.addParts = function(addedPart, layerId) {
               "key": addedPart.key,
               "layer": layerId,
               "contents": addedPart.contents,
-              "heading": null
+              "heading": addedPart.heading || null
             })
            .orderBy("key")
   );
