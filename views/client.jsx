@@ -61,11 +61,18 @@ var NewLayerModal = React.createClass({
         this.setState({ value: event.target.value });
   },
   createLayer : function(){
-    name = this.state.value;
+    var name = this.state.value;
     if(name === ""){
       alert ("Please Enter the Name of the new Layer");
+    }else{
+      //alert (this.props.layerId);
+      var xhr = new XMLHttpRequest;
+      xhr.open("POST", "/api/layers/"+this.props.layerId);
+      xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+      var data = {"newLayerName": name,
+                  "book": this.props.book};
+      xhr.send(JSON.stringify(data));
     }
-    alert (name);
   },
   render : function(){
   return(
@@ -78,18 +85,38 @@ var NewLayerModal = React.createClass({
               value={this.state.value} onChange={this.onChange} />
     </div>
     <div className='modal-footer'>
-      <Button onClick={this.createLayer}>Create</Button>
+      <Button onClick={this.createLayer} >Create</Button>
     </div>
   </Modal>
   );
 }
 });
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 var NewLayerTrigger = React.createClass({
   render : function() {
     return (
       <div className='modal-trig'>
-        <ModalTrigger modal={<NewLayerModal name={this.props.name}/>}>
+        <ModalTrigger modal={<NewLayerModal name={this.props.name} layerId={this.props.layerId} book={this.props.book} />}>
           <Glyphicon glyph='camera'/>
         </ModalTrigger>
       </div>
@@ -105,7 +132,7 @@ var Layers = React.createClass({
         <ul>
         {
           this.props.layers.map(function(layer){
-              return <li key={layer.id}><NewLayerTrigger name={layer.name}/> {layer.name} </li>;
+              return <li key={layer.id}><NewLayerTrigger name={layer.name} layerId={layer.id} book={layer.book} /> {layer.name} </li>;
           })
         }
         </ul>        
@@ -388,7 +415,6 @@ var EditorContents = React.createClass({
                   "addedParts": this.handleChangedParts().addedParts,
                   "deletedParts": this.handleDeletedParts()};
     xhr.send(JSON.stringify(data));
-    //xhr.send(deletedParts);
   },
   render: function() {
     return (
@@ -433,7 +459,7 @@ var MainGrid = React.createClass({
         <Grid>
           <Row className="app-columns">
             <Col md={2}>
-              <Layers layers={this.props.layers}/>
+              <Layers layers={this.props.layers} layerId={this.props.layerId} />
             </Col>
             <Col md={2}>
             </Col>
@@ -458,7 +484,7 @@ var App = React.createClass({
   },
 
   render: function() {
-    var contents = <MainGrid layers={this.state.layers}
+    var contents = <MainGrid  layers={this.state.layers}
                               parts={this.state.parts}
                               initParts={this.state.initParts}
                               chapters={this.state.chapters}

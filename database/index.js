@@ -34,7 +34,7 @@ Db.prototype.addBook = function (book) {
 Db.prototype.addLayer = function (layer, originalLayer) {
   return this.db("layer").insert({
     "name"    : layer.name,
-    "parent"    : originalLayer ? originalLayer.id : null,
+    "parent"  : originalLayer ? originalLayer.id : null,
     "book"    : layer.book || originalLayer.book
   });
 };

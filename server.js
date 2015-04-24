@@ -39,9 +39,6 @@ var api = express()
   .use(bodyParser.json())
   .use(bodyParser.urlencoded({ extended: true }))
   .get("/layers", dbResponse(["bookId"], "getLayers"))
-  // .post("/newlayers/:layerId", function(req, res, next){
-  //   dbAPI.addLayer(layer, originalLayer)
-  // })
   .get("/chapters", dbResponse(["layerId"], "getChapters"))
   .get("/books", dbResponse([], "getBooks"))
   .get("/parts", function(req, res){
@@ -60,7 +57,43 @@ var api = express()
     var addedParts = req.body.addedParts;
     var deletedParts = req.body.deletedParts;
     dbAPI.changeParts(addedParts, changedParts, deletedParts, req.params.layerId);
+  })
+
+
+
+
+
+
+
+
+
+
+
+  .post("/layers/:layerId", function(req, res, next){
+    var newLayer = {"name": req.body.newLayerName,
+                    "book": req.body.book};
+    var originalLayer = {"id": parseInt(req.params.layerId)};
+    console.log(originalLayer);
+    dbAPI.addLayer(newLayer, originalLayer).then();
   });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 if (development) {
   app.get('/assets/bundle.js', function(req, res) {
       res.writeHead(200, {"Content-Type":"text/javascript"});
