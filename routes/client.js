@@ -12,22 +12,39 @@ exports.edit = function renderApp(req, res, next) {
   var layerId = req.params.layerId;
   var initialState = {
     path: path,
-    layerId: layerId,
+    layerId: layerId,    
     bookId: bookId,
+    layerName: "",
     chapters: [],
     layers: [],
     parts: [],
-    initParts: []
+    parentLayerId: 0,
+    parentLayerName: "",
+    parentChapters: [],
+    parentParts: []
   };
-  dbAPI.getChapters(layerId).then(function(chap) {
+  dbAPI.getLayer(layerId).then(function(layer) {
+    initialState.layerName = layer[0].name;
+    initialState.parentLayerId = layer[0].parent;
+    return dbAPI.getChapters(layerId);
+  }).then(function(chap) {
     initialState.chapters = chap;
     return dbAPI.getLayers(bookId);
-  }).then(function(layers){
+  }).then(function(layers) {
     initialState.layers = layers;
     return dbAPI.getPartsInLayer(layerId);
-  }).then(function(parts){
+  }).then(function(parts) {
     initialState.parts = parts;
-    initialState.initParts = parts;
+    return dbAPI.getLayer(initialState.parentLayerId);
+  }).then(function(parentLayer) {
+    if(parentLayer[0])
+      initialState.parentLayerName = parentLayer[0].name;
+    return dbAPI.getChapters(initialState.parentLayerId);
+  }).then(function(parentChap){
+    initialState.parentChapters = parentChap;
+    return dbAPI.getPartsInLayer(initialState.parentLayerId);
+  }).then(function(parentParts) {
+    initialState.parentParts = parentParts;
     var app = React.createElement(App, {initialState: initialState});
     res.send("<!doctype html>\n" + 
         React.renderToString(app) +

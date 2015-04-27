@@ -50,6 +50,13 @@ Db.prototype.getBooks = function() {
 };
 
 /**
+ * Get the information of the layer
+ */
+Db.prototype.getLayer = function(layerId) {
+  return this.db("layer").where("id", layerId);
+};
+
+/**
  * Get a list of all layers that are in a book
  * @return a promise that resolves with an array of layers
  */
@@ -230,3 +237,12 @@ Db.prototype.getPartsInLayer = function (layerId) {
 Db.prototype.removeChapter = function (layerId, chapterKey) {
   return this._partsInChapter(layerId, chapterKey).del();
 };
+
+Db.prototype.removeLayer = function (layerId) {
+  var self = this;
+  var parts = self.getPartsInLayer(layerId);
+  for (var i=0; i<parts.length; i++) {
+    self.deletePart(parts[i], layerId).then();
+  }
+  return self.getLayer(layerId).del();
+}

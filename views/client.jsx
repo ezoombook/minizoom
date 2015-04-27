@@ -117,7 +117,7 @@ var Layers = React.createClass({
         {
           this.props.layers.map(function(layer){
               return  <li key={layer.id}>
-                        <NewLayerTrigger name={layer.name} layerId={layer.id} book={layer.book} /> 
+                        <NewLayerTrigger name={layer.name} layerId={layer.id} book={layer.book} />
                         <a href={'/book/'+layer.book+'/'+layer.id}>{layer.name}</a> 
                       </li>;
           })
@@ -441,8 +441,9 @@ var EditorContents = React.createClass({
   },
   render: function() {
     return (
-      <div>
-        <SaveBtn onClick={this.handleClick} />
+      <div className="panel-parts" >
+        <h2>{this.props.layerName}</h2>
+        <SaveBtn onClick={this.handleClick} />        
         <Parts ref="parent" id="partext" parts={this.state.parts} onKeyUp={this.hanleKeyUp} 
                             onContChange={this.handleContChange} />
         <p>{JSON.stringify(this.state.partFocus)}</p>
@@ -484,12 +485,12 @@ var MainGrid = React.createClass({
             <Col md={2}>
               <Layers layers={this.props.layers} layerId={this.props.layerId} />
             </Col>
-            <Col md={2}>
+            <Col md={4}>
+              <EditorContents layerId={this.props.parentLayerId} parts={this.props.parentParts} layerName={this.props.parentLayerName} />
             </Col>
             <Col md={4}>
-              <EditorContents layerId={this.props.layerId} parts={this.props.parts} initParts={this.props.initParts}/>
-            </Col>
-            <Col md={2}>
+              <EditorContents layerId={this.props.layerId} parts={this.props.parts} 
+                      initParts={this.props.parentParts} layerName={this.props.layerName} />
             </Col>
             <Col md={2}>
               <Chapters chapters={this.props.chapters} />
@@ -509,9 +510,12 @@ var App = React.createClass({
   render: function() {
     var contents = <MainGrid  layers={this.state.layers}
                               parts={this.state.parts}
-                              initParts={this.state.initParts}
+                              parentParts={this.state.parentParts}
                               chapters={this.state.chapters}
-                              layerId={this.state.layerId} />;
+                              layerId={this.state.layerId}
+                              parentLayerId={this.state.parentLayerId}
+                              layerName={this.state.layerName}
+                              parentLayerName={this.state.parentLayerName} />;
     return (
       <html>
         <head>
