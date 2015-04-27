@@ -60,7 +60,7 @@ var NewLayerModal = React.createClass({
   onChange: function(event) {
         this.setState({ value: event.target.value });
   },
-  createLayer : function(){
+  handleClick : function(){
     var name = this.state.value;
     if(name === ""){
       alert ("Please Enter the Name of the new Layer");
@@ -71,6 +71,11 @@ var NewLayerModal = React.createClass({
       var data = {"newLayerName": name,
                   "book": this.props.book};
       xhr.send(JSON.stringify(data));
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState==4 && xhr.status==200) {
+          window.location = xhr.response;
+        }
+      }
     }
   },
   render : function(){
@@ -84,32 +89,12 @@ var NewLayerModal = React.createClass({
               value={this.state.value} onChange={this.onChange} />
     </div>
     <div className='modal-footer'>
-      <Button onClick={this.createLayer} >Create</Button>
+      <Button onClick={this.handleClick} >Create</Button>
     </div>
   </Modal>
   );
 }
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 var NewLayerTrigger = React.createClass({
   render : function() {
@@ -142,6 +127,42 @@ var Layers = React.createClass({
       );
   }
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 var ContHeading = React.createClass({
   handleChange: function(event) {

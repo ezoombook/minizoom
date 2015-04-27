@@ -7,6 +7,7 @@ var React       = require('react');
 var browserify  = require('browserify');
 var reactify    = require('reactify');
 var nodejsx     = require('node-jsx').install();
+var superagent  = require('superagent');
 var routes = require('./routes');
 var client = require('./routes/client');
 var book = require('./routes/book');
@@ -69,8 +70,12 @@ var api = express()
       return dbAPI.getPartsInLayer(originalLayerId);
     }).then(function(parts) {
       dbAPI.changeParts(parts,[],[],newLayerId);
-    });       
+    }).then(function() {
+      var newURL = '/book/'+req.body.book+'/'+newLayerId;
+      res.send(newURL);
+    });      
   });
+
 if (development) {
   app.get('/assets/bundle.js', function(req, res) {
       res.writeHead(200, {"Content-Type":"text/javascript"});
