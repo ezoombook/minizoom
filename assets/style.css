@@ -89,6 +89,7 @@ body {
     width: 50px;
     margin-bottom: 30px;
     padding: 2px;
+    float: right;
 }
 
 .createlayer_btn{

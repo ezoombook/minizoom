@@ -128,42 +128,6 @@ var Layers = React.createClass({
   }
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 var ContHeading = React.createClass({
   handleChange: function(event) {
     var item = {"key": this.props.p.key,
@@ -199,10 +163,45 @@ var ContPart = React.createClass({
   }
 });
 
+var ParentHeading = React.createClass({
+  handleParent: function(key) {
+    if(this.props.parentParts !== []) {
+      var parts = this.props.parentParts;
+      for(var i=0; i<parts.length; i++){
+        if(parts[i].key === key){
+          return parts[i].contents;
+        }
+      }
+    }       
+  },
+  render: function(){
+    var value = this.handleParent(this.props.p.key);
+    return <Textarea className="heading-edit" value={value} />
+  }
+});
+
+var ParentPart = React.createClass({
+  handleParent: function(key) {
+    if(this.props.parentParts !== []) {
+      var parts = this.props.parentParts;
+      for(var i=0; i<parts.length; i++){
+        if(parts[i].key === key){
+          return parts[i].contents;
+        }
+      }
+    }       
+  },
+  render: function(){
+    var value = this.handleParent(this.props.p.key);
+    return <Textarea className="part-edit" value={value} />
+  }
+});
+
 var Parts = React.createClass({
   render : function() {
     var onContChange = this.props.onContChange;
     var onKeyUp = this.props.onKeyUp;
+    var parentParts = this.props.parentParts;
       return (
         <div id="edition-div">{
           this.props.parts.map(function(p){
@@ -210,11 +209,25 @@ var Parts = React.createClass({
             return <span id={"anchor"+p.key} ref={p.key}
                          className="layer-anchor"></span>;
           } else if (p.heading) {
-            return <ContHeading key={p.key} ref={'child'+ p.key} p={p} onContChange={onContChange} 
-                                onKeyUp={onKeyUp} />;
+             return(<div>
+                        <span>
+                            <ParentHeading p={p} parentParts={parentParts} />
+                        </span>
+                        <span>
+                            <ContHeading key={p.key} ref={'child'+ p.key} p={p} onContChange={onContChange} 
+                                 onKeyUp={onKeyUp} />
+                        </span>
+                    </div>);
           } else {
-            return <ContPart key={p.key} ref={'child'+ p.key} p={p} onContChange={onContChange} 
-                              onKeyUp={onKeyUp} />;
+            return (<div>
+                        <span>
+                            <ParentPart p={p} parentParts={parentParts} />
+                        </span>
+                        <span>
+                            <ContPart key={p.key} ref={'child'+ p.key} p={p} onContChange={onContChange} 
+                              onKeyUp={onKeyUp} />
+                        </span>
+                    </div>);
           }
           })
         }
@@ -234,6 +247,7 @@ var EditorContents = React.createClass({
   getInitialState: function(){
     return {
       saveState: true,
+      partName: this.props.partName,
       parts: this.props.parts,
       partFocus: null,
       deletedParts:[]
@@ -334,10 +348,10 @@ var EditorContents = React.createClass({
           }
           newdeletedParts.push(key);
           //If the anchor doesn't exist in origin parts, remove it from parts
-          var initParts = this.props.initParts;
+          var parentParts = this.props.parentParts;
           var found = false;
-          for(var i=0; i<initParts.length; i++){
-            if(initParts[i].key !== oldParts[delpart-1].key) continue;
+          for(var i=0; i<parentParts.length; i++){
+            if(parentParts[i].key !== oldParts[delpart-1].key) continue;
             found = true;
           }
           newFocus = oldParts[delpart-2].key;
@@ -348,22 +362,6 @@ var EditorContents = React.createClass({
           }            
           newParts = beforeParts.concat(afterParts);                
        }
-      //else{
-      //   var sel = document.getSelection();
-      //   alert(sel);
-      //   if (sel.focusOffset === sel.anchorOffset &&
-      //     sel.focusOffset === 0 &&
-      //     sel.anchorNode === sel.focusNode){
-      //             for (var i=0; i<=lastkey; i++) {
-      //     if (oldParts[i].key === key) {
-      //       newFocus = oldParts[i-2].key;
-      //       break;
-      //     }
-      //   }
-      //   }
-
-      // }      
-    //}
     }
     this.setState({
         saveState: false,
@@ -379,18 +377,18 @@ var EditorContents = React.createClass({
     var changedParts = [];
     var addedParts = [];
     if(!this.state.saveState){
-      var initParts = this.props.initParts;
+      var parentParts = this.props.parentParts;
       var parts = this.state.parts;
       //Find part[i]
       for(var i=0; i<parts.length; i++){
         var found = false;
-        //Begin to find in initParts
-        for(var j=0; j<initParts.length; j++){
-          //Fix the initPart j
-          if(parts[i].key === initParts[j].key ){
+        //Begin to find in parentParts
+        for(var j=0; j<parentParts.length; j++){
+          //Fix the parentParts j
+          if(parts[i].key === parentParts[j].key ){
             found = true;
             //if not equal
-            if(parts[i].contents!== initParts[j].contents){//Maybe heading will be change?
+            if(parts[i].contents!== parentParts[j].contents){//Maybe heading will be change?
               var part = {"key": parts[i].key,
                           "contents": parts[i].contents};
               changedParts.push(part);                       
@@ -410,14 +408,14 @@ var EditorContents = React.createClass({
               "addedParts": addedParts});
   },
   handleDeletedParts: function(){
-    var initParts = this.props.initParts;
+    var parentParts = this.props.parentParts;
     var deletedParts = this.state.deletedParts;
     var noParts = [];
     if(this.state.deletedParts.length !== 0){
       for(var i=0; i<deletedParts.length; i++){
         var found = false;
-        for(var j=0; j<initParts.length; j++){
-          if(deletedParts[i] === initParts[j].key){
+        for(var j=0; j<parentParts.length; j++){
+          if(deletedParts[i] === parentParts[j].key){
             found = true;
           }
         }
@@ -441,13 +439,11 @@ var EditorContents = React.createClass({
   },
   render: function() {
     return (
-      <div className="panel-parts" >
-        <h2>{this.props.layerName}</h2>
+      <div className="panel-parts" >        
         <SaveBtn onClick={this.handleClick} />        
-        <Parts ref="parent" id="partext" parts={this.state.parts} onKeyUp={this.hanleKeyUp} 
-                            onContChange={this.handleContChange} />
-        <p>{JSON.stringify(this.state.partFocus)}</p>
-        <p>{JSON.stringify(this.state.parts)}</p>
+        <Parts ref="parent" id="partext" parts={this.state.parts} parentParts={this.props.parentParts}
+                    onKeyUp={this.hanleKeyUp} onContChange={this.handleContChange} 
+                    layerName={this.props.layerName} parentLayerName={this.props.parentLayerName} />
       </div>
       );
   }
@@ -485,12 +481,10 @@ var MainGrid = React.createClass({
             <Col md={2}>
               <Layers layers={this.props.layers} layerId={this.props.layerId} />
             </Col>
-            <Col md={4}>
-              <EditorContents layerId={this.props.parentLayerId} parts={this.props.parentParts} layerName={this.props.parentLayerName} />
-            </Col>
-            <Col md={4}>
+            <Col md={8}>
               <EditorContents layerId={this.props.layerId} parts={this.props.parts} 
-                      initParts={this.props.parentParts} layerName={this.props.layerName} />
+                      parentParts={this.props.parentParts} layerName={this.props.layerName} 
+                      parentLayerName={this.props.parentLayerName}/>
             </Col>
             <Col md={2}>
               <Chapters chapters={this.props.chapters} />
