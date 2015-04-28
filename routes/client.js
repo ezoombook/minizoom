@@ -17,6 +17,7 @@ exports.edit = function renderApp(req, res, next) {
     layerName: "",
     chapters: [],
     layers: [],
+    originParts: [],
     parts: [],
     parentLayerId: 0,
     parentLayerName: "",
@@ -35,6 +36,7 @@ exports.edit = function renderApp(req, res, next) {
     return dbAPI.getPartsInLayer(layerId);
   }).then(function(parts) {
     initialState.parts = parts;
+    initialState.originParts = parts;
     return dbAPI.getLayer(initialState.parentLayerId);
   }).then(function(parentLayer) {
     if(parentLayer[0])

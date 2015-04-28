@@ -390,18 +390,18 @@ var EditorContents = React.createClass({
     var changedParts = [];
     var addedParts = [];
     if(!this.state.saveState){
-      var parentParts = this.props.parentParts;
+      var originParts = this.props.originParts;
       var parts = this.state.parts;
       //Find part[i]
       for(var i=0; i<parts.length; i++){
         var found = false;
-        //Begin to find in parentParts
-        for(var j=0; j<parentParts.length; j++){
-          //Fix the parentParts j
-          if(parts[i].key === parentParts[j].key ){
+        //Begin to find in originParts
+        for(var j=0; j<originParts.length; j++){
+          //Fix the originParts j
+          if(parts[i].key === originParts[j].key ){
             found = true;
             //if not equal
-            if(parts[i].contents!== parentParts[j].contents){//Maybe heading will be change?
+            if(parts[i].contents!== originParts[j].contents){//Maybe heading will be change?
               var part = {"key": parts[i].key,
                           "contents": parts[i].contents};
               changedParts.push(part);                       
@@ -495,7 +495,7 @@ var MainGrid = React.createClass({
               <Layers layers={this.props.layers} layerId={this.props.layerId} />
             </Col>
             <Col md={8}>
-              <EditorContents layerId={this.props.layerId} parts={this.props.parts} 
+              <EditorContents layerId={this.props.layerId} parts={this.props.parts} originParts={this.props.originParts}
                       parentParts={this.props.parentParts} layerName={this.props.layerName} 
                       parentLayerName={this.props.parentLayerName}/>
             </Col>
@@ -516,6 +516,7 @@ var App = React.createClass({
 
   render: function() {
     var contents = <MainGrid  layers={this.state.layers}
+                              originParts={this.state.originParts}
                               parts={this.state.parts}
                               parentParts={this.state.parentParts}
                               chapters={this.state.chapters}
