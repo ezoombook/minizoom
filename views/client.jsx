@@ -348,29 +348,37 @@ var EditorContents = React.createClass({
     var newFocus = key;
     var autoFocus = this.state.autoFocus;
     var newdeletedParts = this.state.deletedParts;
-    if (event.keyCode === 8) {
-      if(event.target.value === ""){
-          var delpart =0;
-          for (var i=0; i<oldParts.length; i++) {
+    var parent = this.refs.parent;
+    var child = parent.refs['child' + key];
+    var input = child.refs.input;
+    var el = input.getDOMNode();
+    var atStart = (el.selectionStart === el.selectionEnd)&&(el.selectionStart === 0);
+    if (event.keyCode === 8 && atStart) {
+      var backpart =0;
+      for (var i=0; i<oldParts.length; i++) {
             if (oldParts[i].key === key) {
-              delpart = i;
+              backpart = i;
               break;
             }
-          }
+      }
+      if(event.target.value !== "") {
+          newFocus = oldParts[backpart-2].key;
+          autoFocus = true;
+      }else{
           newdeletedParts.push(key);
           //If the anchor doesn't exist in parent parts, remove it from parts
           var parentParts = this.props.parentParts;
           var found = false;
           for(var i=0; i<parentParts.length; i++){
-            if(parentParts[i].key !== oldParts[delpart-1].key) continue;
+            if(parentParts[i].key !== oldParts[backpart-1].key) continue;
             found = true;
           }
-          newFocus = oldParts[delpart-2].key;
+          newFocus = oldParts[backpart-2].key;
           autoFocus = true;
-          var beforeParts = oldParts.slice(0,delpart);
-          var afterParts = oldParts.slice(delpart+1,oldParts.length);
+          var beforeParts = oldParts.slice(0,backpart);
+          var afterParts = oldParts.slice(backpart+1,oldParts.length);
           if(!found){
-            beforeParts = oldParts.slice(0,delpart-1);
+            beforeParts = oldParts.slice(0,backpart-1);
           }            
           newParts = beforeParts.concat(afterParts);                
        }
