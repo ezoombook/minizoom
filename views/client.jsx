@@ -41,16 +41,6 @@ var NavWelcome = React.createClass({
   }
 });
 
-// var myAltr = React.createClass({
-//   render : function(){
-//     return(
-//       <Alert bsStyle='danger'>
-//         <h4>No</h4>
-//       </Alert>
-//       );
-//   }
-// });
-
 var NewLayerModal = React.createClass({
   getInitialState: function() {
         return {
@@ -250,6 +240,7 @@ var EditorContents = React.createClass({
       partName: this.props.partName,
       parts: this.props.parts,
       partFocus: null,
+      autoFocus: false,
       deletedParts:[]
     };
   },
@@ -315,12 +306,31 @@ var EditorContents = React.createClass({
     return { "parts": parts,
              "focusKey": focusKey};    
   },
+  moveCaretToEnd: function(input) {
+    var el = input.getDOMNode();
+    if (typeof el.selectionStart === 'number') {
+            el.selectionStart = el.selectionEnd = el.value.length;
+    } else if (typeof el.createTextRange !== 'undefined') {
+            el.focus();
+            var range = el.createTextRange();
+            range.collapse(false);
+            range.select();
+        }
+  },
   handleFocus: function(key) {
+        //alert("in");
         var parent = this.refs.parent;
         var child = parent.refs['child' + key];
         if (!child) return;
         var input = child.refs.input;
-        input.getDOMNode().focus();
+        if(this.state.autoFocus) {
+          //alert("1");
+          this.moveCaretToEnd(input);
+          this.setState({autoFocus: false});
+        }else{
+          //alert("2");
+          input.getDOMNode().focus();
+        }
   },
   handleContChange: function(item) {
     var newChange = this.itemChange(this.state.partFocus, this.state.parts, item);
@@ -336,6 +346,7 @@ var EditorContents = React.createClass({
     var oldParts = this.state.parts;
     var newParts = this.state.parts;
     var newFocus = key;
+    var autoFocus = this.state.autoFocus;
     var newdeletedParts = this.state.deletedParts;
     if (event.keyCode === 8) {
       if(event.target.value === ""){
@@ -347,7 +358,7 @@ var EditorContents = React.createClass({
             }
           }
           newdeletedParts.push(key);
-          //If the anchor doesn't exist in origin parts, remove it from parts
+          //If the anchor doesn't exist in parent parts, remove it from parts
           var parentParts = this.props.parentParts;
           var found = false;
           for(var i=0; i<parentParts.length; i++){
@@ -355,6 +366,7 @@ var EditorContents = React.createClass({
             found = true;
           }
           newFocus = oldParts[delpart-2].key;
+          autoFocus = true;
           var beforeParts = oldParts.slice(0,delpart);
           var afterParts = oldParts.slice(delpart+1,oldParts.length);
           if(!found){
@@ -367,6 +379,7 @@ var EditorContents = React.createClass({
         saveState: false,
         parts: newParts,
         partFocus: newFocus,
+        autoFocus: autoFocus,
         deletedParts: newdeletedParts
       });
   },
