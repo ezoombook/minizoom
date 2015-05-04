@@ -318,17 +318,14 @@ var EditorContents = React.createClass({
         }
   },
   handleFocus: function(key) {
-        //alert("in");
         var parent = this.refs.parent;
         var child = parent.refs['child' + key];
         if (!child) return;
         var input = child.refs.input;
         if(this.state.autoFocus) {
-          //alert("1");
           this.moveCaretToEnd(input);
           this.setState({autoFocus: false});
         }else{
-          //alert("2");
           input.getDOMNode().focus();
         }
   },
@@ -431,6 +428,7 @@ var EditorContents = React.createClass({
   handleDeletedParts: function(){
     var parentParts = this.props.parentParts;
     var deletedParts = this.state.deletedParts;
+    alert(deletedParts);
     var noParts = [];
     if(this.state.deletedParts.length !== 0){
       for(var i=0; i<deletedParts.length; i++){
@@ -461,7 +459,11 @@ var EditorContents = React.createClass({
   render: function() {
     return (
       <div className="panel-parts" >        
-        <SaveBtn onClick={this.handleClick} />        
+        <SaveBtn onClick={this.handleClick} /> 
+            <span>
+                <h1 className="layer-name">{this.props.parentLayerName} {this.props.layerName}</h1>
+                <h1 className="layer-name">{this.props.layerName}</h1>
+            </span>       
         <Parts ref="parent" id="partext" parts={this.state.parts} parentParts={this.props.parentParts}
                     onKeyUp={this.hanleKeyUp} onContChange={this.handleContChange} 
                     layerName={this.props.layerName} parentLayerName={this.props.parentLayerName} />
@@ -471,19 +473,36 @@ var EditorContents = React.createClass({
 });
 
 var Chapters = React.createClass({
+  ChapCont : function(key) {
+    for(var i=0; i<this.props.chapters.length; i++) {
+      if(this.props.chapters[i].key === key) {
+        return this.props.chapters[i].contents;
+      }
+    }
+  },
   render : function() {
     return (
         <nav>
           <h2>Chapters</h2>
           <ol>
           {
-            this.props.chapters.map(function(chap){
-              return <li key={chap.key} className="panel-list"><a
+            this.props.parentChapters.map(function(chap){
+              var chapCont = this.ChapCont(chap.key);
+              if(chapCont) {
+                return (<li key={chap.key} className="panel-list"><a
+                      href={'#'+chap.contents}
+                      onClick={this.props.goTo}
+                    >
+                      {chapCont}
+                    </a></li>);
+              } else {
+                return (<li key={chap.key} className="panel-list"><a
                       href={'#'+chap.contents}
                       onClick={this.props.goTo}
                     >
                       {chap.contents}
-                    </a></li>
+                    </a></li>);
+              }
             }.bind(this))
           }
           </ol>
@@ -508,7 +527,7 @@ var MainGrid = React.createClass({
                       parentLayerName={this.props.parentLayerName}/>
             </Col>
             <Col md={2}>
-              <Chapters chapters={this.props.chapters} />
+              <Chapters chapters={this.props.chapters} parentChapters={this.props.parentChapters} />
             </Col>
           </Row>
         </Grid>
@@ -528,6 +547,7 @@ var App = React.createClass({
                               parts={this.state.parts}
                               parentParts={this.state.parentParts}
                               chapters={this.state.chapters}
+                              parentChapters={this.state.parentChapters}
                               layerId={this.state.layerId}
                               parentLayerId={this.state.parentLayerId}
                               layerName={this.state.layerName}

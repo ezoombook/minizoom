@@ -238,6 +238,16 @@ Db.prototype.removeChapter = function (layerId, chapterKey) {
   return this._partsInChapter(layerId, chapterKey).del();
 };
 
+Db.prototype.insertPartsToNewlayer =function (parts,newLayerId) {
+  var self = this;
+  for (var i=0; i<parts.length; i++) {
+    //var newContente = parts[i].contents ? "" : null;
+    var newPart = parts[i];
+    newPart.contents = parts[i].contents ? "" : null;
+    self.addParts(newPart, newLayerId).then();
+  }
+};
+
 Db.prototype.removeLayer = function (layerId) {
   var self = this;
   var parts = self.getPartsInLayer(layerId);

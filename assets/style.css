@@ -20,7 +20,7 @@ body {
   width: 100%;
   display: block;
   background-color: #aaa;
-  height:0px;
+  height:1px;
 }
 
 .userpage {
@@ -74,6 +74,10 @@ body {
 .part-edit{
   border: 0px;
   font-size: 120%;
+  width: 360px;
+}
+
+.layer-name{
   width: 360px;
 }
 

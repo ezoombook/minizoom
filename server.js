@@ -57,6 +57,7 @@ var api = express()
     var changedParts = req.body.changedParts;
     var addedParts = req.body.addedParts;
     var deletedParts = req.body.deletedParts;
+    console.log(deletedParts);
     dbAPI.changeParts(addedParts, changedParts, deletedParts, req.params.layerId);
   })
   .post("/layers/:layerId", function(req, res, next){
@@ -69,7 +70,7 @@ var api = express()
       newLayerId = layerId;
       return dbAPI.getPartsInLayer(originalLayerId);
     }).then(function(parts) {
-      dbAPI.changeParts(parts,[],[],newLayerId);
+      dbAPI.insertPartsToNewlayer(parts,newLayerId);
     }).then(function() {
       var newURL = '/book/'+req.body.book+'/'+newLayerId;
       res.send(newURL);
