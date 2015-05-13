@@ -12,6 +12,7 @@ var routes = require('./routes');
 var client = require('./routes/client');
 var book = require('./routes/book');
 var test = require('./routes/test');
+var workspace = require('./routes/workspace');
 var importer    = require('./import/html');
 var dbAPI       = new (require("./database"));
 var parts = require('./parts');
@@ -80,7 +81,7 @@ var api = express()
 if (development) {
   app.get('/assets/bundle.js', function(req, res) {
       res.writeHead(200, {"Content-Type":"text/javascript"});
-      browserify('./views/client.jsx', {
+      browserify('./views/workspace.jsx', {
         debug: true,
       })
       .transform(reactify)
@@ -96,6 +97,7 @@ app
   .use('/book/:bookId/:layerId', client.edit)
   .use('/books',book.list)
   .use('/test', test.test)
+  .use('/workspace', workspace.work)
   .use('/', routes.index)
   .listen(3000, function() {
     console.log('Point your browser at http://localhost:3000');
