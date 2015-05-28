@@ -26,7 +26,13 @@
     "react": ">=0.12",
     "react-textarea-autosize": "*",
     "body-parser": ">=1.12.3",
-    "JSONStream": ">=0.10.0"
+    "JSONStream": ">=0.10.0",
+    "mustbe": ">=0.3.1",
+    "passport": ">=0.2.2",
+    "passport-local": ">=1.0.0",
+    "cookie-parser": "*",
+    "express-session": "*",
+    "bcrypt-nodejs": "*"
   },
   "devDependencies": {
     "browserify": ">=3.44.2",

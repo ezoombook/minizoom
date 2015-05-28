@@ -5,6 +5,7 @@ var React       = require('react');
 var superagent  = require('superagent');
 var bootstrap = require('react-bootstrap');
 var Textarea = require('react-textarea-autosize');
+var Navtop = require("../views/navtop.jsx");
 
 var Grid = bootstrap.Grid,
     Row = bootstrap.Row,
@@ -24,25 +25,6 @@ var Grid = bootstrap.Grid,
     TabbedArea = bootstrap.TabbedArea,
     TabPane = bootstrap.TabPane,
     Table = bootstrap.Table;
-
-var NavWelcome = React.createClass({
-  render :function() {
-    return (
-            <Navbar fixedTop inverse toggleNavKey={0}> 
-              <Nav>
-              <NavItem eventKey={1} href='/'>eZoomBook</NavItem>
-              <NavItem eventKey={2} href='/books'>Books</NavItem>
-              <NavItem eventKey={3} href='/projects'>Projects</NavItem>
-              <DropdownButton eventKey={4} title='Help!'>
-                <MenuItem eventKey='1'>Tutorial</MenuItem>
-                <MenuItem eventKey='2'>FAQ</MenuItem>
-                <MenuItem eventKey='3'>Contact Us</MenuItem>
-              </DropdownButton>
-              </Nav>
-            </Navbar>
-      )
-  }
-});
 
 var NewProjectModal = React.createClass({
   render : function(){
@@ -277,7 +259,7 @@ var MainGrid = React.createClass({
   render : function() {
     return (
       <div className="workspacepage">
-        <NavWelcome />
+        {React.createElement(Navtop)}
         <Grid>
         <WorkTabArea creatorGroups={this.props.creatorGroups}
                               managerGroups={this.props.managerGroups}
