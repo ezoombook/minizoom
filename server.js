@@ -21,7 +21,7 @@ var book = require('./routes/book');
 // var util = require('util');
 // var JSONStream = require('JSONStream');
 
-// var development = process.env.NODE_ENV !== 'production';
+var development = process.env.NODE_ENV !== 'production';
 
 var app = express();
 
@@ -82,17 +82,17 @@ var api = express()
 //     });      
 //   });
 
-// if (development) {
-//   app.get('/assets/bundle.js', function(req, res) {
-//       res.writeHead(200, {"Content-Type":"text/javascript"});
-//       browserify('./views/client.jsx', {
-//         debug: true,
-//       })
-//       .transform(reactify)
-//       .bundle()
-//       .pipe(res);
-//   });
-// }
+if (development) {
+  app.get('/assets/bundle.js', function(req, res) {
+      res.writeHead(200, {"Content-Type":"text/javascript"});
+      browserify('./views/workspace.jsx', {
+        debug: true,
+      })
+      .transform(reactify)
+      .bundle()
+      .pipe(res);
+  });
+}
 
 
 app
@@ -101,7 +101,7 @@ app
   //.use('/book/:bookId/:layerId', client.edit)
   .use('/books',book.list)
   .use('/projects',project.list)
-  .use('/workspace/:userId', workspace.workspace)
+  .use('/workspace/:userId', workspace.worklist)
   .use('/', routes.index)
   .listen(3000, function() {
     console.log('Point your browser at http://localhost:3000');

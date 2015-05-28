@@ -10,7 +10,7 @@
  * @argument heading {string} [heading=null] - The heading level if the part is a heading, or null
  * @argument contents {string} [contents=""]
  */
-function Part(key, heading, contents) {
+function Part(key, contents, heading) {
   this.key = (key instanceof PartKey) ? key : PartKey.parse(key);
   if (heading != null) this.setHeading(heading);
   if (contents != null) this.setContents(contents);

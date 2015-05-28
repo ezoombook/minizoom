@@ -6,7 +6,7 @@ var React       = require('react');
 var dbAPI       = new (require("../database"));
 var Workspace     = require("../views/workspace.jsx");
 
-exports.workspace = function renderWorkspace(req, res, next) {
+exports.worklist = function renderWorkspace(req, res, next) {
   var path = url.parse(req.url).pathname;
   var userId = req.params.userId;
   var initialState = {
@@ -52,9 +52,8 @@ exports.workspace = function renderWorkspace(req, res, next) {
   	initialState.managerProjects.push(managerProjects);
   	return dbAPI.getManagerBooks(userId);
   }).then(function(managerBooks){
-  		console.log(managerBooks);
   	initialState.managerBooks = managerBooks;	
-  	var workspace = React.createElement(Workspace);
+  	var workspace = React.createElement(Workspace, {initialState: initialState});
     res.send("<!doctype html>\n" + 
         React.renderToString(workspace) +
         "<script>initialState = "+JSON.stringify(initialState)+"</script>"

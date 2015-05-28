@@ -12,6 +12,10 @@ body {
   padding: 15px;
 }
 
+.workspacepage {
+  padding: 15px;
+}
+
 .app-columns{
   padding-top: 80px;
 }
@@ -100,4 +104,17 @@ body {
     width: 60px;
     float: right;
     padding: 2px;
+}
+
+.work-tab{
+  margin-top: 100px;
+}
+
+.work-tab-item{
+  border: 0px;
+}
+
+.work-table{
+  border: : 0px;
+  margin-top: 10px;
 }
