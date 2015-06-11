@@ -1,6 +1,5 @@
-var Promise = require("promise"),
-    DbAdapter = require("./db-stream-adapter"),
-    parts     = require("../parts");
+var Promise = require("promise");
+var util = require('util');
 
 /**
  * Class through which all database interactions should happen.
@@ -16,9 +15,27 @@ module.exports = Db = function Db(connection){
  * 1 means super
  * 2 means ordinary
  */
- Db.prototype.getUser = function (userId) {
-  return  this.db("users")
-              .where("id",userId);
+Db.prototype.getUserById = function (userId) {
+  return this.db("users").where("id", userId);
+};
+
+Db.prototype.getUserByName = function (userName) {
+  return this.db("users").where("name", userName);
+}
+
+Db.prototype.addUser = function (userName, pwd) {
+  return (  this.db("users")
+            .insert({
+              "name": userName,
+              "password": pwd,
+              "status": 1
+            })
+          );
+};
+
+Db.prototype.changePsw = function (userName, pwd) {
+  return this.db("users").where("name", userName)
+              .update({"password": pwd});
 };
 
 Db.prototype.getCreatorGroups = function (userId) {
@@ -40,7 +57,8 @@ Db.prototype.getManagerGroups = function (userId) {
 Db.prototype.getManagerBooks = function (userId) {
   return this.db.distinct('books.id','name','creator','author')
                 .from("books")
-                .rightJoin("bookguests","books.id","bookguests.book");
+                .rightJoin("bookguests","books.id","bookguests.book")
+                .where('guest', userId);
 };
 
 Db.prototype.getGroupProjects = function (groups) {
@@ -58,14 +76,38 @@ Db.prototype.getGroupProjects = function (groups) {
 Db.prototype.getMemberGroups = function (userId) {
   return this.db.distinct('groups.id','name','creator','manager')
                 .from('groups')
-                .rightJoin('groupmembers', 'groups.id', 'groupmembers.group');
+                .rightJoin('groupmembers', 'groups.id', 'groupmembers.group')
+                .where('member', userId);
 };
 
 Db.prototype.getManagerProjects = function (userId) {
   return this.db.distinct('projects.id','name','creator','description','status','creatime','group')
                 .from("projects")
-                .rightJoin("projectguests","projects.id","projectguests.project");
+                .rightJoin("projectguests","projects.id","projectguests.project")
+                .where('guest', userId);
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // /**
 //  * Insert a book in the database and create the 

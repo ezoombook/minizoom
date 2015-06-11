@@ -12,15 +12,15 @@ var Grid = bootstrap.Grid,
 
 var SigninBtn = React.createClass({
   render: function() {
-    return <Button href='/signin'
-                   bsSize="large" bsStyle="primary" block>Login</Button> ;
+    return <Button href='/login'
+                   bsSize="large" bsStyle="primary" block>Login</Button>;
   }
 });
 
 var SignupBtn = React.createClass({
   render: function() {
     return <Button href='/signup'
-                   bsSize="large" bsStyle="primary" block>Register</Button> ;
+                   bsSize="large" bsStyle="primary" block>Register</Button>;
   }
 });
 
@@ -53,7 +53,6 @@ var Home = React.createClass({
       <html>
         <head>
           <link rel="stylesheet" href="/assets/style.css" />
-          <script src="../assets/bundle.js" />
           <meta charSet="utf8" />
           <title>HomeMinizoom</title>
         </head>

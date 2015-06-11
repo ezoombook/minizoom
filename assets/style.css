@@ -118,3 +118,15 @@ body {
   border: : 0px;
   margin-top: 10px;
 }
+
+.loginpanel{
+  margin-top: 100px;
+}
+
+.loginbutton{
+  float: right;
+}
+
+.loginpage{
+  text-align: center;
+}
