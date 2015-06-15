@@ -79,10 +79,10 @@ var TableProjects = React.createClass({
       {creatorProjects.map(function(creatorProject){
         return <tr key={creatorProject.id}>
             <td>
-              <a href={'/workspace/projects/'+creatorProject.id}>{creatorProject.name}</a>
+              <a href={'/projects/'+creatorProject.id}>{creatorProject.name}</a>
             </td>
             <td>
-              <a href={'/workspace/projects/'+creatorProject.id+'/settings'}><Glyphicon glyph='cog'/></a>
+              <a href={'/projects/'+creatorProject.id+'/settings'}><Glyphicon glyph='cog'/></a>
             </td>
           </tr>;
         })
@@ -90,10 +90,10 @@ var TableProjects = React.createClass({
       {managerProjects.map(function(managerProject){
         return <tr key={managerProject.id}>
             <td>
-              <a href={'/workspace/projects/'+managerProject.id}>{managerProject.name}</a>
+              <a href={'/projects/'+managerProject.id}>{managerProject.name}</a>
             </td>
             <td>
-              <a href={'/workspace/projects/'+managerProject.id+'/settings/users'}><Glyphicon glyph='user'/></a>
+              <a href={'/projects/'+managerProject.id+'/settings/users'}><Glyphicon glyph='user'/></a>
             </td>
           </tr>;
         })
@@ -101,10 +101,10 @@ var TableProjects = React.createClass({
       {memberProjects.map(function(memberProject){
         return <tr key={memberProject.id}>
             <td>
-              <a href={'/workspace/projects/'+memberProject.id}>{memberProject.name}</a>
+              <a href={'/projects/'+memberProject.id}>{memberProject.name}</a>
             </td>
             <td>
-              <a href={'/workspace/projects/'+memberProject.id+'/infos'}><Glyphicon glyph='info-sign'/></a>
+              <a href={'/projects/'+memberProject.id+'/infos'}><Glyphicon glyph='info-sign'/></a>
             </td>
           </tr>;
         })
@@ -136,10 +136,10 @@ var TableBooks = React.createClass({
       {creatorBooks.map(function(creatorBook){
         return <tr key={creatorBook.id}>
             <td>
-              <a href={'/workspace/books/'+creatorBook.id}>{creatorBook.name}</a>
+              <a href={'/books/'+creatorBook.id}>{creatorBook.name}</a>
             </td>
             <td>
-              <a href={'/workspace/books/'+creatorBook.id+'/settings'}><Glyphicon glyph='cog'/></a>
+              <a href={'/books/'+creatorBook.id+'/settings'}><Glyphicon glyph='cog'/></a>
             </td>
           </tr>;
         })
@@ -147,10 +147,10 @@ var TableBooks = React.createClass({
       {managerBooks.map(function(managerBook){
         return <tr key={managerBook.id}>
             <td>
-              <a href={'/workspace/books/'+managerBook.id}>{managerBook.name}</a>
+              <a href={'/books/'+managerBook.id}>{managerBook.name}</a>
             </td>
             <td>
-              <a href={'/workspace/books/'+managerBook.id+'/infos'}><Glyphicon glyph='user'/></a>
+              <a href={'/books/'+managerBook.id+'/infos'}><Glyphicon glyph='user'/></a>
             </td>
           </tr>;
         })
@@ -182,10 +182,10 @@ var TableGroups = React.createClass({
       {creatorGroups.map(function(creatorGroup){
         return <tr key={creatorGroup.id}>
             <td>
-              <a href={'/workspace/groups/'+creatorGroup.id}>{creatorGroup.name}</a>
+              <a href={'/groups/'+creatorGroup.id}>{creatorGroup.name}</a>
             </td>
             <td>
-              <a href={'/workspace/groups/'+creatorGroup.id+'/settings'}><Glyphicon glyph='cog'/></a>
+              <a href={'/groups/'+creatorGroup.id+'/settings'}><Glyphicon glyph='cog'/></a>
             </td>
           </tr>;
         })
@@ -193,10 +193,10 @@ var TableGroups = React.createClass({
       {managerGroups.map(function(managerGroup){
         return <tr key={managerGroup.id}>
             <td>
-              <a href={'/workspace/groups/'+managerGroup.id}>{managerGroup.name}</a>
+              <a href={'/groups/'+managerGroup.id}>{managerGroup.name}</a>
             </td>
             <td>
-              <a href={'/workspace/groups/'+managerGroup.id+'/infos'}><Glyphicon glyph='user'/></a>
+              <a href={'/groups/'+managerGroup.id+'/infos'}><Glyphicon glyph='user'/></a>
             </td>
           </tr>;
         })
@@ -204,10 +204,10 @@ var TableGroups = React.createClass({
       {memberGroups.map(function(memberGroup){
         return <tr key={memberGroup.id}>
             <td>
-              <a href={'/workspace/groups/'+memberGroup.id}>{memberGroup.name}</a>
+              <a href={'/groups/'+memberGroup.id}>{memberGroup.name}</a>
             </td>
             <td>
-              <a href={'/workspace/groups/'+memberGroup.id+'/infos'}><Glyphicon glyph='info-sign'/></a>
+              <a href={'/groups/'+memberGroup.id+'/infos'}><Glyphicon glyph='info-sign'/></a>
             </td>
           </tr>;
         })
