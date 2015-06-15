@@ -68,22 +68,26 @@ var TableProjects = React.createClass({
     var memberProjects = this.props.memberProjects;
     var user = this.props.user;
     return (
-    <Table striped condensed hover className="work-table">
+    <Table striped condensed hover className="work-table">    
     <thead>
       <tr>
-        <th>Project Name</th>
-        <th></th>
-      </tr>
-    </thead>
+        <th className="work-name">Project Name</th>
+        <th className="work-description">Description</th>
+        <th className="work-right"></th>
+      </tr>      
+    </thead>    
     <tbody>
       {creatorProjects.map(function(creatorProject){
-        return <tr key={creatorProject.id}>
+        return <tr key={creatorProject.id}>            
             <td>
               <a href={'/projects/'+creatorProject.id}>{creatorProject.name}</a>
             </td>
             <td>
-              <a href={'/projects/'+creatorProject.id+'/settings'}><Glyphicon glyph='cog'/></a>
+              {creatorProject.description}
             </td>
+            <td>
+              <Glyphicon glyph='cog'/>
+            </td>            
           </tr>;
         })
       }
@@ -93,7 +97,10 @@ var TableProjects = React.createClass({
               <a href={'/projects/'+managerProject.id}>{managerProject.name}</a>
             </td>
             <td>
-              <a href={'/projects/'+managerProject.id+'/settings/users'}><Glyphicon glyph='user'/></a>
+              {managerProject.description}
+            </td>
+            <td>
+              <a href={'/projects/'+managerProject.id}><Glyphicon glyph='user'/></a>
             </td>
           </tr>;
         })
@@ -104,7 +111,10 @@ var TableProjects = React.createClass({
               <a href={'/projects/'+memberProject.id}>{memberProject.name}</a>
             </td>
             <td>
-              <a href={'/projects/'+memberProject.id+'/infos'}><Glyphicon glyph='info-sign'/></a>
+              {memberProject.description}
+            </td>
+            <td>
+              <a href={'/projects/'+memberProject.id}><Glyphicon glyph='info-sign'/></a>
             </td>
           </tr>;
         })
@@ -128,8 +138,9 @@ var TableBooks = React.createClass({
     <Table striped condensed hover className="work-table">
     <thead>
       <tr>
-        <th>Book Name</th>
-        <th></th>
+        <th className="work-name">Book Name</th>
+        <th className="work-description">Author</th>
+        <th className="work-right"></th>
       </tr>
     </thead>
     <tbody>
@@ -139,7 +150,10 @@ var TableBooks = React.createClass({
               <a href={'/books/'+creatorBook.id}>{creatorBook.name}</a>
             </td>
             <td>
-              <a href={'/books/'+creatorBook.id+'/settings'}><Glyphicon glyph='cog'/></a>
+              {creatorBook.author}
+            </td>
+            <td>
+              <Glyphicon glyph='cog'/>
             </td>
           </tr>;
         })
@@ -150,7 +164,10 @@ var TableBooks = React.createClass({
               <a href={'/books/'+managerBook.id}>{managerBook.name}</a>
             </td>
             <td>
-              <a href={'/books/'+managerBook.id+'/infos'}><Glyphicon glyph='user'/></a>
+              {managerBook.author}
+            </td>
+            <td>
+              <Glyphicon glyph='user'/>
             </td>
           </tr>;
         })
@@ -174,8 +191,9 @@ var TableGroups = React.createClass({
     <Table striped condensed hover className="work-table">
     <thead>
       <tr>
-        <th>Group Name</th>
-        <th></th>
+        <th className="work-name">Group Name</th>
+        <th className="work-description"></th>
+        <th className="work-right"></th>
       </tr>
     </thead>
     <tbody>
@@ -184,8 +202,9 @@ var TableGroups = React.createClass({
             <td>
               <a href={'/groups/'+creatorGroup.id}>{creatorGroup.name}</a>
             </td>
+            <td></td>
             <td>
-              <a href={'/groups/'+creatorGroup.id+'/settings'}><Glyphicon glyph='cog'/></a>
+              <Glyphicon glyph='cog'/>
             </td>
           </tr>;
         })
@@ -195,8 +214,9 @@ var TableGroups = React.createClass({
             <td>
               <a href={'/groups/'+managerGroup.id}>{managerGroup.name}</a>
             </td>
+            <td></td>
             <td>
-              <a href={'/groups/'+managerGroup.id+'/infos'}><Glyphicon glyph='user'/></a>
+              <Glyphicon glyph='user'/>
             </td>
           </tr>;
         })
@@ -206,8 +226,9 @@ var TableGroups = React.createClass({
             <td>
               <a href={'/groups/'+memberGroup.id}>{memberGroup.name}</a>
             </td>
+            <td></td>
             <td>
-              <a href={'/groups/'+memberGroup.id+'/infos'}><Glyphicon glyph='info-sign'/></a>
+              <Glyphicon glyph='info-sign'/>
             </td>
           </tr>;
         })

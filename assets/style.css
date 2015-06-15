@@ -119,6 +119,18 @@ body {
   margin-top: 10px;
 }
 
+.work-name{
+  width: 460px;
+}
+
+.work-description{
+  width: 500px;
+}
+
+.work-right{
+  width: 180px;
+}
+
 .loginpanel{
   margin-top: 100px;
 }
