@@ -18,29 +18,25 @@ module.exports = function(passport, dbAPI) {
   });
 
   passport.use('local-signup', new LocalStrategy({
+      usernameField: 'email',
+      passwordField: 'password',
       passReqToCallback : true
     },
-    function(req, username, password, done) {
+    function(req, email, password, done) {
       process.nextTick(function() {
-        dbAPI.getUserByName(username).then(function(data) {
+        dbAPI.getUserByMail(email).then(function(data) {
           if(data.length === 0) {
             bcrypt.genSalt(10, function(err, salt) {
               if(err){
                 console.log("ERROR SALT"+err);
               } else {
-                bcrypt.hash('super', salt, function(err, pswSuper) {
-                  console.log('SUPER!!!'+pswSuper);
-                  dbAPI.changePsw('super',pswSuper);
-                });
-                bcrypt.hash('ord', salt, function(err, pswOrd) {
-                  console.log(pswOrd);
-                });
                 bcrypt.hash(password, salt, function(err, pswHash) {
                   if(err){
                     console.log("ERROR HASH"+err);
                   } else {
-                    dbAPI.addUser(username, pswHash).then(function(users){
-                      return dbAPI.getUserByName(username);
+                    var username = req.body.username;
+                    dbAPI.addUser(email, username, pswHash).then(function(users){
+                      return dbAPI.getUserByMail(email);
                     }).then(function(newUser){
                       console.log(newUser);
                       return done(null, newUser[0]);
@@ -50,7 +46,7 @@ module.exports = function(passport, dbAPI) {
               }
             })
           } else {
-            return done(null, false, req.flash('signupMessage', 'That name is already taken.'));
+            return done(null, false, req.flash('signupMessage', 'That email is already taken.'));
           }
         })
       })
@@ -58,10 +54,12 @@ module.exports = function(passport, dbAPI) {
   ));
 
   passport.use('local-login', new LocalStrategy({
+      usernameField: 'email',
+      passwordField: 'password',
       passReqToCallback : true
     },
-    function(req, username, password, done) {
-      dbAPI.getUserByName(username).then(function(data) {
+    function(req, email, password, done) {
+      dbAPI.getUserByMail(email).then(function(data) {
         if(data.length === 0) {
          return done(null, false, req.flash('loginMessage', 'No user found.'));
         } else {
@@ -77,6 +75,7 @@ module.exports = function(passport, dbAPI) {
               return done(null, false, req.flash('loginMessage', 'Oops! Wrong password.'));
             }
           });
+      //return done(null, user);
         }
       })
     }

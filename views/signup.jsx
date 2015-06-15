@@ -15,26 +15,52 @@ var Grid = bootstrap.Grid,
 var SignupPanel = React.createClass({
   getInitialState: function() {
         return {
+            email:"",
             username: "",
-            password: ""
+            password: "",
+            confirmPwe: ""
         };
   },
-  handleChange: function(event) {
+  handleMailChange: function(event) {
+        this.setState({ email: event.target.value });
+  },
+  handleNameChange: function(event) {
         this.setState({ username: event.target.value });
   },
   handlePwdChange: function(event) {
         this.setState({ password: event.target.value });
   },
+  handlePwdConfirm: function(event) {
+        this.setState({ confirmPwe: event.target.value});
+  },
   handleClick : function(){
+    var email = this.state.email;
     var username = this.state.username;
     var password = this.state.password;
-    if(username === "" || password === ""){
-      alert ("Please Enter Username and Password");
-    }else{
+    var confirmPwe = this.state.confirmPwe;
+    var completed = true;
+    if(email === ""){
+      completed = false;
+      alert("Please enter Email");
+    }
+    if(username === ""){
+      completed = false;
+      alert("Please enter Username");
+    }
+    if(password === ""){
+      completed = false;
+      alert ("Please enter Password");
+    }
+    if(password !== confirmPwe){
+      completed = false;
+      alert ("Please Enter the same Password");
+    }
+    if(completed){
       var xhr = new XMLHttpRequest;
       xhr.open("POST", "/signup");
       xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-      var data = {"username": username,
+      var data = {"email": email,
+                  "username": username,
                   "password": password};
       xhr.send(JSON.stringify(data));
       // xhr.onreadystatechange = function() {
@@ -47,11 +73,15 @@ var SignupPanel = React.createClass({
   render: function() {
     return(
       <Panel header='eZoomBook Register'>
-        <Input type='text' placeholder='Username' value={this.state.username} onChange={this.handleChange} />
+        <Input type='text' placeholder='Email' value={this.state.email} onChange={this.handleMailChange} />
+        <Input type='text' placeholder='Username' value={this.state.username} onChange={this.handleNameChange} />
         <Input type='text' placeholder='Password' value={this.state.password} onChange={this.handlePwdChange} />
+        <Input type='text' placeholder='Confirm Password' value={this.state.confirmPwe} onChange={this.handlePwdConfirm} />
         <Button className='loginbutton' onClick={this.handleClick}>Register</Button>
+        <p>Mail {this.state.email}</p>
         <p>Name {this.state.username}</p>
         <p>Pwd {this.state.password}</p>
+        <p>ComPwd {this.state.confirmPwe}</p>
       </Panel>
       );
   }

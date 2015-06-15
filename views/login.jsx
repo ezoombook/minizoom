@@ -15,42 +15,44 @@ var Grid = bootstrap.Grid,
 var LoginPanel = React.createClass({
   getInitialState: function() {
         return {
-            username: "",
+            email: "",
             password: ""
         };
   },
   handleChange: function(event) {
-        this.setState({ username: event.target.value });
+        this.setState({ email: event.target.value });
   },
   handlePwdChange: function(event) {
         this.setState({ password: event.target.value });
   },
   handleClick : function(){
-    var username = this.state.username;
+    var email = this.state.email;
     var password = this.state.password;
-    if(username === "" || password === ""){
-      alert ("Please Enter Username and Password");
+    if(email === "" || password === ""){
+      alert ("Please Enter Email and Password");
     }else{
       var xhr = new XMLHttpRequest;
       xhr.open("POST", "/login");
       xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-      var data = {"username": username,
+      var data = {"email": email,
                   "password": password};
       xhr.send(JSON.stringify(data));
-      // xhr.onreadystatechange = function() {
-      //   if (xhr.readyState==4 && xhr.status==200) {
-      //     console.log (xhr.response);
-      //  }
-      // }
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState==4 && xhr.status==200) {
+          console.log (xhr.response);
+          //var newPage = React.createElement(xhr.response);
+          //React.render(xhr.response);
+       }
+      }
     }
   },
   render: function() {
     return(
       <Panel header='eZoomBook Login'>
-        <Input type='text' placeholder='Username' value={this.state.username} onChange={this.handleChange} />
+        <Input type='text' placeholder='Email' value={this.state.email} onChange={this.handleChange} />
         <Input type='text' placeholder='Password' value={this.state.password} onChange={this.handlePwdChange} />
         <Button className='loginbutton' onClick={this.handleClick}>Login</Button>
-        <p>Name {this.state.username}</p>
+        <p>Email {this.state.email}</p>
         <p>Pwd {this.state.password}</p>
       </Panel>
       );

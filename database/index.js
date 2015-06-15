@@ -23,9 +23,14 @@ Db.prototype.getUserByName = function (userName) {
   return this.db("users").where("name", userName);
 }
 
-Db.prototype.addUser = function (userName, pwd) {
+Db.prototype.getUserByMail = function (email) {
+  return this.db("users").where("email", email);
+}
+
+Db.prototype.addUser = function (email ,userName, pwd) {
   return (  this.db("users")
             .insert({
+              "email": email,
               "name": userName,
               "password": pwd,
               "status": 1
@@ -33,9 +38,11 @@ Db.prototype.addUser = function (userName, pwd) {
           );
 };
 
-Db.prototype.changePsw = function (userName, pwd) {
-  return this.db("users").where("name", userName)
-              .update({"password": pwd});
+Db.prototype.updateUser = function (id, userName, pwd) {
+  console.log("IN db updateUser");
+  return this.db("users").where("id", id)
+              .update({"name": userName,
+                        "password": pwd});
 };
 
 Db.prototype.getCreatorGroups = function (userId) {

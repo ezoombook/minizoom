@@ -34,29 +34,30 @@ var LoginPanel = React.createClass({
     var username = this.state.username;
     var password = this.state.password;
     var confirmPwe = this.state.confirmPwe;
-    if(username === ""){
+    if(username === "")
       alert ("Please Enter Username");
-    } else if(password !== confirmPwe){
+    if(password !== confirmPwe)
       alert ("Please Enter the same Password");
-    } else if(password === ""){
-      password = this.props.user.password
-    } else {
-      // var xhr = new XMLHttpRequest;
-      // xhr.open("POST", "/api/profile");
-      // xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-      // var data = {"username": username,
-      //             "password": password};
-      // xhr.send(JSON.stringify(data));
-      // xhr.onreadystatechange = function() {
-      //   if (xhr.readyState==4 && xhr.status==200) {
-      //     console.log (xhr.response);
-      //  }
-      // }
-    }
-  },
+    if(username !== this.props.user.name || password !== "")
+      console.log("IN xhr");
+      var xhr = new XMLHttpRequest;
+      xhr.open("PATCH", "/api/profile");
+      xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+      if (password === "")
+        password = this.props.user.password;
+      var data = {"id": this.props.user.id,
+                  "username": username,
+                  "password": password};
+      xhr.send(JSON.stringify(data));
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState==4 && xhr.status==200) {
+          window.location = xhr.response;
+       }
+      }
+    },
   render: function() {
     return(
-      <Panel header='eZoomBook Login'>
+      <Panel header='Your Profile'>
         <Input type='text' label='New Username' placeholder='Username' value={this.state.username} onChange={this.handleChange} />
         <Input type='text' label='New Password' placeholder='Password' value={this.state.password} onChange={this.handlePwdChange} />
         <Input type='text' label='Confirm Password' placeholder='Password' value={this.state.confirmPwe} onChange={this.handlePwdConfirm} />
@@ -73,7 +74,13 @@ var MainGrid = React.createClass({
     return (
       <div className="profilepage">
         {React.createElement(Navtop,{user:this.props.user})}
-        <LoginPanel user={this.props.user} />
+        <Grid>
+            <Row className="loginpanel">
+              <Col md={3}></Col>
+              <Col md={6}><LoginPanel user={this.props.user} /></Col>
+              <Col md={3}></Col>            
+            </Row>
+          </Grid>
       </div>
     );
   }
@@ -106,7 +113,7 @@ if (typeof window === 'object') {
   var profile; // golbal application variable
   window.onload = function() {
     // initialState has been set before (sent as a payload by the server)
-    profile = React.createElement(Profile, {initialState:initialState});
+    profile = React.createElement(Profile, {initialState: initialState});
     React.render(profile, document);
   }
 }

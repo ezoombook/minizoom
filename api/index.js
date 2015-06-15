@@ -1,6 +1,11 @@
 'use strict';
 
+var profile = require('./profile');
+
 module.exports = function(api) {
+	console.log("IN api");
+	api.route('/profile')
+		.patch(profile.patch);
  // api.get("/layers", dbResponse(["bookId"], "getLayers"))
  //  .get("/chapters", dbResponse(["layerId"], "getChapters"))
  //  .get("/books", dbResponse([], "getBooks"))
@@ -41,4 +46,5 @@ module.exports = function(api) {
  //      res.send(newURL);
  //    });      
  //  });
+	
 }

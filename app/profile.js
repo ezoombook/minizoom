@@ -15,6 +15,7 @@ exports.renderProfile = function renderProfile(req, res) {
     };
     var profile = React.createElement(Profile, {initialState: initialState});
       res.send("<!doctype html>\n" + 
-          React.renderToString(profile)
+          React.renderToString(profile) +
+          "<script>initialState = "+JSON.stringify(initialState)+"</script>"
       );
 }

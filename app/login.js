@@ -25,7 +25,15 @@ exports.renderLogin = function renderLogin(req, res) {
 }
 
 exports.postLogin = passport.authenticate('local-login', {
-        successRedirect : '/workspace', // redirect to the secure profile section
-        failureRedirect : '/login', // redirect back to the login page if there is an error
-        failureFlash : true // allow flash messages
-});
+        successRedirect : '/workspace', 
+        failureRedirect : '/login', 
+        failureFlash : true 
+  });
+
+
+// exports.postLogin = passport.authenticate('local-login', function(req, res) {
+//     // If this function gets called, authentication was successful.
+//     // `req.user` contains the authenticated user.
+//     res.redirect('/workspace');
+//   }
+// );
