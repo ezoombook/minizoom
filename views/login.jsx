@@ -49,11 +49,9 @@ var LoginPanel = React.createClass({
   render: function() {
     return(
       <Panel header='eZoomBook Login'>
-        <Input type='text' placeholder='Email' value={this.state.email} onChange={this.handleChange} />
+        <Input type='email' placeholder='Email' value={this.state.email} onChange={this.handleChange} />
         <Input type='text' placeholder='Password' value={this.state.password} onChange={this.handlePwdChange} />
         <Button className='loginbutton' onClick={this.handleClick}>Login</Button>
-        <p>Email {this.state.email}</p>
-        <p>Pwd {this.state.password}</p>
       </Panel>
       );
   }

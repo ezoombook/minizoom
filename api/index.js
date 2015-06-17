@@ -1,11 +1,16 @@
 'use strict';
 
 var profile = require('./profile');
+var groups = require('./groups');
+var users = require('./users');
 
 module.exports = function(api) {
-	console.log("IN api");
 	api.route('/profile')
 		.patch(profile.patch);
+	api.route('/groups')
+		.post(groups.post);
+	api.route('/users/:userId')
+		.get(users.get);
  // api.get("/layers", dbResponse(["bookId"], "getLayers"))
  //  .get("/chapters", dbResponse(["layerId"], "getChapters"))
  //  .get("/books", dbResponse([], "getBooks"))

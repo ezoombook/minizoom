@@ -34,6 +34,7 @@ var LoginPanel = React.createClass({
     var username = this.state.username;
     var password = this.state.password;
     var confirmPwe = this.state.confirmPwe;
+    var pwdChange = true;
     if(username === "")
       alert ("Please Enter Username");
     if(password !== confirmPwe)
@@ -43,10 +44,13 @@ var LoginPanel = React.createClass({
       var xhr = new XMLHttpRequest;
       xhr.open("PATCH", "/api/profile");
       xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-      if (password === "")
+      if (password === ""){
         password = this.props.user.password;
+        pwdChange = false;
+      }
       var data = {"id": this.props.user.id,
                   "username": username,
+                  "pwdChange": pwdChange,
                   "password": password};
       xhr.send(JSON.stringify(data));
       xhr.onreadystatechange = function() {
@@ -62,8 +66,6 @@ var LoginPanel = React.createClass({
         <Input type='text' label='New Password' placeholder='Password' value={this.state.password} onChange={this.handlePwdChange} />
         <Input type='text' label='Confirm Password' placeholder='Password' value={this.state.confirmPwe} onChange={this.handlePwdConfirm} />
         <Button className='loginbutton' onClick={this.handleClick}>Change my profile</Button>
-        <p>Name {this.state.username}</p>
-        <p>Pwd {this.state.password}</p>
       </Panel>
       );
   }

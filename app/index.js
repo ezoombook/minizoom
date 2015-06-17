@@ -8,6 +8,7 @@ var profile = require('./profile');
 var logout = require('./logout');
 var books = require('./books');
 var projects = require('./projects');
+var groups = require('./groups');
 
 module.exports = function(app, passport) {
 	app.get('/', homepage.renderHomePage);
@@ -18,6 +19,7 @@ module.exports = function(app, passport) {
 	app.post('/signup', signup.postSignup);
 	app.get('/profile',isLoggedIn, profile.renderProfile);
 	app.get('/logout', logout.logout);
+	app.get('/groups/add', groups.addGroup);
 	//app.get('/books', books.list);
 	//app.get('/projects', projects.list);
 }

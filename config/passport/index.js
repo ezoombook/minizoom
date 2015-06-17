@@ -7,7 +7,7 @@ var bcrypt = require('bcrypt');
 // expose this function to our app using module.exports
 module.exports = function(passport, dbAPI) {
   passport.serializeUser(function(user, done) {
-    console.log(user);
+    //console.log(user);
     done(null, user.id);
   });
 
@@ -64,14 +64,14 @@ module.exports = function(passport, dbAPI) {
          return done(null, false, req.flash('loginMessage', 'No user found.'));
         } else {
           var user = data[0];
-          console.log(user.password);
-          console.log(password);
+          //console.log(user.password);
+          //console.log(password);
           bcrypt.compare(password, user.password,  function(err, valid) {
-            console.log(valid);
+            //console.log(valid);
             if(valid === true){
               return done(null, user);
             } else {
-              console.log("WRONG pwd");
+              //console.log("WRONG pwd");
               return done(null, false, req.flash('loginMessage', 'Oops! Wrong password.'));
             }
           });

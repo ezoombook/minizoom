@@ -54,7 +54,6 @@ exports.renderWorkspace = function renderWorkspace(req, res, next) {
     return dbAPI.getManagerBooks(userId);
   }).then(function(managerBooks){
     initialState.managerBooks = managerBooks; 
-    console.log(initialState);
     var workspace = React.createElement(Workspace, {initialState: initialState});
     res.send("<!doctype html>\n" + 
         React.renderToString(workspace) +

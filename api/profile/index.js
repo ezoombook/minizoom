@@ -8,8 +8,10 @@ exports.patch = function patchProfile(req, res) {
 	console.log("IN api/profile");
 	var id = req.body.id;
 	var username = req.body.username;
+	var pwdChange = req.body.pwdChange;
 	var password = req.body.password;
-	bcrypt.genSalt(10, function(err, salt) {
+	if(pwdChange){
+	  bcrypt.genSalt(10, function(err, salt) {
         if(err){
             console.log("ERROR SALT"+err);
         } else {
@@ -24,5 +26,12 @@ exports.patch = function patchProfile(req, res) {
 					}
 				})
 		}
-	})
+	  })
+	} else {
+		dbAPI.updateUser(id, username, password).then(function(users){
+                var newURL = '/workspace';
+                res.send(newURL);
+        });
+	}
+	
 }

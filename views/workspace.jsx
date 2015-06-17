@@ -234,8 +234,11 @@ var TableGroups = React.createClass({
         })
       }
       <tr>
-      <td>{user.name}</td>
-      <td>{user.status}</td>
+        <td>
+          <a href={'/groups/add'}>Create a new group</a>
+        </td>
+        <td></td>
+        <td></td>
       </tr>
     </tbody>
     </Table>);

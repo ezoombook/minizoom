@@ -15,6 +15,10 @@ module.exports = Db = function Db(connection){
  * 1 means super
  * 2 means ordinary
  */
+Db.prototype.getUsers = function() {
+  return this.db("users");
+};
+
 Db.prototype.getUserById = function (userId) {
   return this.db("users").where("id", userId);
 };
@@ -44,6 +48,37 @@ Db.prototype.updateUser = function (id, userName, pwd) {
               .update({"name": userName,
                         "password": pwd});
 };
+
+Db.prototype.addGroup = function (name, creator, manager) {
+  return ( this.db("groups")
+            .returning('id')
+            .insert({
+              "name": name,
+              "creator": creator,
+              "manager": manager
+            })
+          );
+};
+
+Db.prototype.addGroupMember = function (group, member) {
+  return (this.db("groupmembers")
+          .returning('id')
+          .insert({
+            "group": group,
+            "member": member
+          })
+          );
+}
+
+Db.prototype.addProjectGuest = function (group, guest) {
+  return (this.db("projectguests")
+          .returning('id')
+          .insert({
+            "group": group,
+            "guest": guest
+          })
+          );
+}
 
 Db.prototype.getCreatorGroups = function (userId) {
   return this.db("groups").where("creator", userId);

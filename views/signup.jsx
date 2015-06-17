@@ -73,15 +73,11 @@ var SignupPanel = React.createClass({
   render: function() {
     return(
       <Panel header='eZoomBook Register'>
-        <Input type='text' placeholder='Email' value={this.state.email} onChange={this.handleMailChange} />
+        <Input type='email' placeholder='Email' value={this.state.email} onChange={this.handleMailChange} />
         <Input type='text' placeholder='Username' value={this.state.username} onChange={this.handleNameChange} />
         <Input type='text' placeholder='Password' value={this.state.password} onChange={this.handlePwdChange} />
         <Input type='text' placeholder='Confirm Password' value={this.state.confirmPwe} onChange={this.handlePwdConfirm} />
         <Button className='loginbutton' onClick={this.handleClick}>Register</Button>
-        <p>Mail {this.state.email}</p>
-        <p>Name {this.state.username}</p>
-        <p>Pwd {this.state.password}</p>
-        <p>ComPwd {this.state.confirmPwe}</p>
       </Panel>
       );
   }
