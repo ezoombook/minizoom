@@ -37,7 +37,8 @@ var UserTable = React.createClass({
     var users = this.props.users;
     var filterText = this.props.filterText;
     return ( 
-      <Input type='select' placeholder='select user' onChange={this.handleChange}>
+      <Input type='select' onChange={this.handleChange}>
+          <option disabled selected> -- Select An User -- </option>
             { users.map(function(user) {
                 if (user.name.indexOf(filterText) !== -1)
                     return <option key={user.id} value={user.email}>{user.email}</option>;
@@ -122,6 +123,7 @@ var ChooseManager = React.createClass({
     }
     return (
        <Input type='select' label='Select Manager' onChange={this.handleChange}>
+        <option value='0' disabled selected className="default-option"> -- Select A Member -- </option>
           {rows}
       </Input>
     );
@@ -252,16 +254,15 @@ var NewGroupPanel = React.createClass({
   render: function() {
     var members = this.state.members;
     var title = ( <h1>New Group</h1> );
+            // <AddGuests guests={this.state.guests} users={this.props.users} onChange={this.handleAddGuests} 
+            //         onClick={this.handleDelGuests} />
     return (
       <Panel header={title}>
         <Input type='text' label='Group Name' placeholder='Name' value={this.state.name} onChange={this.handleNameChange} />
         <AddMembers members={this.state.members} users={this.props.users} onChange={this.handleAddMembers} 
                     onClick={this.handleDelMembers} />
         <ChooseManager members={this.state.members} onChange={this.handleManager} getUser={this.getUser} />
-        <AddGuests guests={this.state.guests} users={this.props.users} onChange={this.handleAddGuests} 
-                    onClick={this.handleDelGuests} />
         <Button className='loginbutton' onClick={this.handleClick}>Register</Button>
-        <p> Manager {this.state.manager} </p>
       </Panel>
     );
   }
