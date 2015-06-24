@@ -5,7 +5,7 @@ var React       = require('react');
 var superagent  = require('superagent');
 var bootstrap   = require('react-bootstrap');
 var Navtop = require("../views/navtop.jsx");
-var Textarea = require('react-textarea-autosize');
+var SearchUser = require("../views/searchuser.jsx");
 
 var Grid = bootstrap.Grid,
     Row = bootstrap.Row,
@@ -15,101 +15,6 @@ var Grid = bootstrap.Grid,
     Button = bootstrap.Button,
     OverlayTrigger = bootstrap.OverlayTrigger,
     Popover = bootstrap.Popover;
-
-var SearchBar = React.createClass({
-  handleChange: function(event) {
-    this.props.onChange(event.target.value);
-  },
-  render: function() {
-    return ( 
-      <Input type='text' label={this.props.type} placeholder='Search user name' value={this.props.filterText} onChange={this.handleChange} />
-    );
-  }
-});
-
-var UserTable = React.createClass({
-  handleChange: function(event) {
-    console.log("IN UserTable");
-    console.log(event.target.value);
-    this.props.onChange(event.target.value);
-  },
-  render: function() {
-    var users = this.props.users;
-    var filterText = this.props.filterText;
-    return ( 
-      <Input type='select' onChange={this.handleChange}>
-          <option disabled selected> -- Select An User -- </option>
-            { users.map(function(user) {
-                if (user.name.indexOf(filterText) !== -1)
-                    return <option key={user.id} value={user.email}>{user.email}</option>;
-              })
-            }
-      </Input>
-    );
-  }
-});
-
-var SearchUser = React.createClass({
-  getInitialState: function(){
-    return{
-      filterText: ""
-    };    
-  },
-  onSearchChange: function(value){
-    this.setState({ filterText: value });
-  },
-  onSelectChange: function(value){
-    console.log("IN onSelectChange");
-    console.log(value);
-    var exist = false;
-    var addedUsers = this.props.addedUsers;
-    for(var i=0; i<addedUsers.length; i++){
-      if(value === addedUsers[i])
-        exist = true;
-    }
-    if(!exist){
-      this.props.onChange(value);
-    }
-    else
-      console.log("Already added");
-  },
-  render: function(){
-    return (
-        <div>
-            <SearchBar filterText={this.state.filterText} type={this.props.type} onChange={this.onSearchChange} />
-            <UserTable filterText={this.state.filterText} users={this.props.users} onChange={this.onSelectChange} />
-        </div>);
-  }
-
-});
-
-var AddMembers = React.createClass({
-  handleChange: function(newMember){
-    this.props.onChange(newMember);
-  },
-  handleClick: function(event){
-    console.log("CLICK"+event.target.value);
-    this.props.onClick(event.target.value);
-  },   
-  render: function() {
-    var members = this.props.members;
-    var rows = [];
-    for(var i=0; i<members.length; i++) {       
-          rows.push(<OverlayTrigger trigger='hover' placement='bottom' key={members[i]}
-                              overlay={<Popover title='Click to delete the member'>{members[i]}</Popover>}>
-                  <Button className='loginbutton' value={members[i]} onClick={this.handleClick}>{members[i]}</Button>
-              </OverlayTrigger>);
-    }
-    //var title = ( <strong>Member-List</strong> );
-    return ( 
-      <div>
-        <SearchUser addedUsers={this.props.members} type='Add Members' users={this.props.users} onChange={this.handleChange} />
-        <Panel header='Member-List' >
-            {rows}
-        </Panel>  
-      </div>);
-  }
-});
 
 var ChooseManager = React.createClass({
   handleChange: function(event) {
@@ -130,42 +35,51 @@ var ChooseManager = React.createClass({
   }
 });
 
-var AddGuests = React.createClass({
-  handleChange: function(newGuest){
-    this.props.onChange(newGuest);
-  },
-  handleClick: function(event){
-    //console.log("CLICK"+event);
-    this.props.onClick(event.target.value);
-  },   
+var NewGroupPanel = React.createClass({
+  handleChange: function(newMember){
+    this.props.handleAddMembers(newMember);
+  },  
   render: function() {
-    var guests = this.props.guests;
-    var rows = [];
-    for(var i=0; i<guests.length; i++) {       
-          rows.push(<OverlayTrigger trigger='hover' placement='bottom' key={guests[i]}
-                              overlay={<Popover title='Click to delete the guest'>{guests[i]}</Popover>}>
-                  <Button className='loginbutton' value={guests[i]} onClick={this.handleClick}>{guests[i]}</Button>
-              </OverlayTrigger>
-              );
-    }
-    //var title = ( <h3><strong> Guest-List </strong></h3> );
-    return ( 
-      <div>
-        <SearchUser addedUsers={this.props.guests} type='Add Guests' users={this.props.users} onChange={this.handleChange} />
-        <Panel header='Guest-List' >
-            {rows}
-        </Panel>   
-      </div>);
+    var members = this.props.members;
+    var title = ( <h1>New Group</h1> );
+    return (
+      <Panel header={title}>
+        <Input type='text' label='Group Name' placeholder='Name' value={this.props.name} onChange={this.props.handleNameChange} />
+        <SearchUser addedUsers={this.props.members} type='Add Members' users={this.props.users} onChange={this.handleChange} />
+        <ChooseManager members={this.props.members} onChange={this.props.handleManager} />
+        <Button className='loginbutton' onClick={this.props.handleClick}>Register</Button>
+      </Panel>
+    );
   }
 });
 
-var NewGroupPanel = React.createClass({
+var MembersPanel = React.createClass({
+  handleClick: function(event){
+    console.log("CLICK"+event.target.value);
+    this.props.onClick(event.target.value);
+  }, 
+  render: function() {
+    var members = this.props.members;
+    var rows = [];
+    for(var i=0; i<members.length; i++) {       
+          rows.push(<OverlayTrigger trigger='hover' placement='bottom' key={members[i]}
+                              overlay={<Popover title='Click to delete the member'>{members[i]}</Popover>}>
+                  <Button className='loginbutton' value={members[i]} onClick={this.handleClick}>{members[i]}</Button>
+              </OverlayTrigger>);
+    }
+    return ( 
+        <Panel header='Member-List' >
+            {rows}
+        </Panel> );
+  }  
+});
+
+var MainGrid = React.createClass({
   getInitialState: function() {
         return {
             name:"",
             members: [],
-            manager: "",
-            guests: []
+            manager: ""
         };
   },
   handleNameChange: function(event) {
@@ -193,32 +107,6 @@ var NewGroupPanel = React.createClass({
   },
   handleManager: function(value) {
       this.setState({ manager: value });
-  },
-  handleAddGuests: function(newGuest) {
-      var oldList = this.state.guests;
-      var members = this.state.members;
-      var inMemebers = false;
-      for(var i=0; i<members.length; i++) {
-        if (newGuest === members[i])
-          inMemebers = true;
-      }
-      if (inMemebers) {
-        console.log('Already a Member');
-      } else {
-        var newList =  oldList.concat(newGuest);
-        this.setState({ guests: newList});
-      }      
-  },
-  handleDelGuests: function(delGuest) {
-      var guests = this.state.guests;
-      for(var i=0; i<guests.length; i++){
-        console.log(guests[i]);
-        if (delGuest === guests[i]) {
-          guests.splice(i, 1);
-          break;
-        }
-      }
-      this.setState({ guests: guests});
   },
   handleClick : function(){
     var name = this.state.name;
@@ -251,33 +139,22 @@ var NewGroupPanel = React.createClass({
       }
     }
   },
-  render: function() {
-    var members = this.state.members;
-    var title = ( <h1>New Group</h1> );
-            // <AddGuests guests={this.state.guests} users={this.props.users} onChange={this.handleAddGuests} 
-            //         onClick={this.handleDelGuests} />
-    return (
-      <Panel header={title}>
-        <Input type='text' label='Group Name' placeholder='Name' value={this.state.name} onChange={this.handleNameChange} />
-        <AddMembers members={this.state.members} users={this.props.users} onChange={this.handleAddMembers} 
-                    onClick={this.handleDelMembers} />
-        <ChooseManager members={this.state.members} onChange={this.handleManager} getUser={this.getUser} />
-        <Button className='loginbutton' onClick={this.handleClick}>Register</Button>
-      </Panel>
-    );
-  }
-});
-
-var MainGrid = React.createClass({
   render : function() {
     return (
       <div className="loginpage">
         {React.createElement(Navtop,{user:this.props.user})}
         <Grid>
           <Row className="loginpanel">
-            <Col md={4}></Col>
-            <Col md={4}><NewGroupPanel user={this.props.user} users={this.props.users} /></Col>
-            <Col md={4}></Col>
+            <Col md={2}></Col>
+            <Col md={4}><NewGroupPanel user={this.props.user} users={this.props.users} 
+                          name={this.state.name} members={this.state.members}
+                          manager={this.state.manager} 
+                          handleNameChange={this.handleNameChange}
+                          handleAddMembers={this.handleAddMembers}
+                          handleManager={this.handleManager}
+                          handleClick={this.handleClick} /></Col>
+            <Col md={4}><MembersPanel members={this.state.members} onClick={this.handleDelMembers} /></Col>
+            <Col md={2}></Col>
           </Row>
         </Grid>
       </div>
@@ -316,3 +193,59 @@ if (typeof window === 'object') {
     React.render(newgroup, document);
   }
 }
+
+  // handleAddGuests: function(newGuest) {
+  //     var oldList = this.state.guests;
+  //     var members = this.state.members;
+  //     var inMemebers = false;
+  //     for(var i=0; i<members.length; i++) {
+  //       if (newGuest === members[i])
+  //         inMemebers = true;
+  //     }
+  //     if (inMemebers) {
+  //       console.log('Already a Member');
+  //     } else {
+  //       var newList =  oldList.concat(newGuest);
+  //       this.setState({ guests: newList});
+  //     }      
+  // },
+  // handleDelGuests: function(delGuest) {
+  //     var guests = this.state.guests;
+  //     for(var i=0; i<guests.length; i++){
+  //       console.log(guests[i]);
+  //       if (delGuest === guests[i]) {
+  //         guests.splice(i, 1);
+  //         break;
+  //       }
+  //     }
+  //     this.setState({ guests: guests});
+  // },
+
+  // var AddGuests = React.createClass({
+//   handleChange: function(newGuest){
+//     this.props.onChange(newGuest);
+//   },
+//   handleClick: function(event){
+//     //console.log("CLICK"+event);
+//     this.props.onClick(event.target.value);
+//   },   
+//   render: function() {
+//     var guests = this.props.guests;
+//     var rows = [];
+//     for(var i=0; i<guests.length; i++) {       
+//           rows.push(<OverlayTrigger trigger='hover' placement='bottom' key={guests[i]}
+//                               overlay={<Popover title='Click to delete the guest'>{guests[i]}</Popover>}>
+//                   <Button className='loginbutton' value={guests[i]} onClick={this.handleClick}>{guests[i]}</Button>
+//               </OverlayTrigger>
+//               );
+//     }
+//     //var title = ( <h3><strong> Guest-List </strong></h3> );
+//     return ( 
+//       <div>
+//         <SearchUser addedUsers={this.props.guests} type='Add Guests' users={this.props.users} onChange={this.handleChange} />
+//         <Panel header='Guest-List' >
+//             {rows}
+//         </Panel>   
+//       </div>);
+//   }
+// });

@@ -26,7 +26,7 @@ exports.renderLogin = function renderLogin(req, res) {
 
 exports.postLogin = passport.authenticate('local-login', {
         successRedirect : '/workspace', 
-        failureRedirect : '/login', 
+        //failureRedirect : '/login', 
         failureFlash : true 
   });
 

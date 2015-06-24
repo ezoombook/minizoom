@@ -20,6 +20,7 @@ module.exports = function(app, passport) {
 	app.get('/profile',isLoggedIn, profile.renderProfile);
 	app.get('/logout', logout.logout);
 	app.get('/groups/add', groups.addGroup);
+	app.get('/groups/:groupId', groups.getGroup);
 	//app.get('/books', books.list);
 	//app.get('/projects', projects.list);
 }

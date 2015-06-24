@@ -40,6 +40,13 @@ var LoginPanel = React.createClass({
       xhr.onreadystatechange = function() {
         if (xhr.readyState==4 && xhr.status==200) {
           console.log (xhr.response);
+          window.onload = function() {
+            console.log ("INTO");
+            // initialState has been set before (sent as a payload by the server)
+            var newPage = React.createElement(xhr.response);
+            console.log ("render");
+            React.render(newPage, document);
+          }
           //var newPage = React.createElement(xhr.response);
           //React.render(xhr.response);
        }

@@ -88,6 +88,15 @@ if (development) {
       .bundle()
       .pipe(res);
   });
+  app.get('/assets/group.js', function(req, res) {
+      res.writeHead(200, {"Content-Type":"text/javascript"});
+      browserify('./views/group.jsx', {
+        debug: true,
+      })
+      .transform(reactify)
+      .bundle()
+      .pipe(res);
+  });
 }
 
 app.use('/assets', express.static(path.join(__dirname, 'assets')));

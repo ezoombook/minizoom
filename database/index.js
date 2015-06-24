@@ -49,6 +49,10 @@ Db.prototype.updateUser = function (id, userName, pwd) {
                         "password": pwd});
 };
 
+Db.prototype.getGroup = function (id) {
+  return this.db("groups").where("id", id);
+}
+
 Db.prototype.addGroup = function (name, creator, manager) {
   return ( this.db("groups")
             .returning('id')
@@ -60,6 +64,12 @@ Db.prototype.addGroup = function (name, creator, manager) {
           );
 };
 
+Db.prototype.getGroupMembers = function(id) {
+  return this.db("groupmembers")
+              .where("group", id)
+              .select("member");
+};
+
 Db.prototype.addGroupMember = function (group, member) {
   return (this.db("groupmembers")
           .returning('id')
@@ -68,7 +78,7 @@ Db.prototype.addGroupMember = function (group, member) {
             "member": member
           })
           );
-}
+};
 
 Db.prototype.addProjectGuest = function (group, guest) {
   return (this.db("projectguests")
@@ -78,7 +88,7 @@ Db.prototype.addProjectGuest = function (group, guest) {
             "guest": guest
           })
           );
-}
+};
 
 Db.prototype.getCreatorGroups = function (userId) {
   return this.db("groups").where("creator", userId);
