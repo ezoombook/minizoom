@@ -47,8 +47,10 @@ exports.getGroup = function getGroup(req, res) {
 		var initialState = {
 			user: user,
 			users: [],
-			group: [],
-			groupMembers: {},
+			group: {},
+			creator: {},
+			manager: {},
+			groupMembers: [],
 			status: ""
 		};
 		dbAPI.getUsers().then(function(users){
@@ -62,22 +64,39 @@ exports.getGroup = function getGroup(req, res) {
 			return dbAPI.getGroup(groupId);
 		}).then(function(group){
 			initialState.group = group[0];
+			return dbAPI.getUserById(initialState.group.creator);
+		}).then(function(creator){
+			initialState.creator = creator[0];
+			return dbAPI.getUserById(initialState.group.manager);
+		}).then(function(manager){
+			initialState.manager = manager[0];
 			return dbAPI.getGroupMembers(groupId);
 		}).then(function(groupMembers){
-			initialState.groupMembers = groupMembers;
+			// for(var i=0; i<groupMembers.length; i++){
+			// 	console.log(groupMembers[i].member);
+			// 	dbAPI.getUserById(groupMembers[i].member).then(function(member){
+			// 		//console.log(member);
+			// 		initialState.groupMembers.push(member[0].email);
+			// 	})
+			// }
+			for(var i=0; i<groupMembers.length; i++){
+				initialState.groupMembers.push(groupMembers[i].member);
+			}
+			console.log("out for");
+			//initialState.groupMembers = groupMembers;
 			if (user.id === initialState.group.creator)
 				initialState.status = "creator";
 			else if (user.id === initialState.group.manager)
 				initialState.status = "manager";
 			else {
 				for(var i=0; i<groupMembers.length; i++){
-					if (user.id === groupMembers){
+					if (user.id === groupMembers[i].member){
 						initialState.status = "member";
 						break;
 					}
 				}
 				initialState.status = "no right";
-			}
+			}			
 			console.log(initialState);				 
 			var group = React.createElement(Group, {initialState: initialState});
     		res.send("<!doctype html>\n" + 

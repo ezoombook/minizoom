@@ -3,6 +3,7 @@
 var profile = require('./profile');
 var groups = require('./groups');
 var users = require('./users');
+var authority = require('./authority');
 
 module.exports = function(api) {
 	api.route('/profile')
@@ -11,6 +12,8 @@ module.exports = function(api) {
 		.post(groups.post);
 	api.route('/users/:userId')
 		.get(users.get);
+	api.route('authority/group/:groupId/:userId')
+		.get(authority.group);
  // api.get("/layers", dbResponse(["bookId"], "getLayers"))
  //  .get("/chapters", dbResponse(["layerId"], "getChapters"))
  //  .get("/books", dbResponse([], "getBooks"))

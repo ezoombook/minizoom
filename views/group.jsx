@@ -64,12 +64,27 @@ var ChooseManager = React.createClass({
 });
 
 var GroupPanel = React.createClass({
+  render: function() {
+    var members = this.state.members;
+    var title = ( <h1>New Group</h1> );
+    return (
+      <Panel header={title}>
+        <Input type='text' label='Group Name' placeholder='Name' value={this.state.name} onChange={this.handleNameChange} />
+        <AddMembers members={this.state.members} users={this.props.users} onChange={this.handleAddMembers} 
+                    onClick={this.handleDelMembers} />
+        <ChooseManager members={this.state.members} onChange={this.handleManager} getUser={this.getUser} />
+        <Button className='loginbutton' onClick={this.handleClick}>Register</Button>
+      </Panel>
+    );
+  }
+});
+
+var MainGrid = React.createClass({
   getInitialState: function() {
         return {
-            name:"",
-            members: [],
-            manager: "",
-            guests: []
+            name: this.props.name,
+            members: this.props.members,
+            manager: this.props.manager
         };
   },
   handleNameChange: function(event) {
@@ -129,31 +144,19 @@ var GroupPanel = React.createClass({
       }
     }
   },
-  render: function() {
-    var members = this.state.members;
-    var title = ( <h1>New Group</h1> );
-    return (
-      <Panel header={title}>
-        <Input type='text' label='Group Name' placeholder='Name' value={this.state.name} onChange={this.handleNameChange} />
-        <AddMembers members={this.state.members} users={this.props.users} onChange={this.handleAddMembers} 
-                    onClick={this.handleDelMembers} />
-        <ChooseManager members={this.state.members} onChange={this.handleManager} getUser={this.getUser} />
-        <Button className='loginbutton' onClick={this.handleClick}>Register</Button>
-      </Panel>
-    );
-  }
-});
-
-var MainGrid = React.createClass({
   render : function() {
     return (
       <div className="loginpage">
         {React.createElement(Navtop,{user:this.props.user})}
         <Grid>
           <Row className="loginpanel">
-            <Col md={4}></Col>
-            <Col md={4}><GroupPanel user={this.props.user} users={this.props.users} /></Col>
-            <Col md={4}></Col>
+            <Col md={2}></Col>
+            <Col md={4}><GroupPanel user={this.props.user} users={this.props.users} 
+                          handleNameChange={this.props.handleNameChange} /></Col>
+            <Col md={4}><MembersPanel status={this.props.status} members={this.props.members}
+                          onClick={this.handleDelMembers} />
+            </Col>
+            <Col md={2}></Col>
           </Row>
         </Grid>
       </div>
@@ -167,12 +170,17 @@ var Group = React.createClass({
   },
   render: function() {
     var contents = <MainGrid  user={this.state.user}
-                              users={this.state.users} />;
+                              users={this.state.users}
+                              manager={this.state.group.manager}
+                              creator={this.state.group.creator}
+                              name={this.state.group.name}
+                              members={this.state.groupMembers}
+                              status={this.state.status} />;
     return (
       <html>
         <head>
           <link rel="stylesheet" href="/assets/style.css" />
-          <script src="../assets/newgroup.js" />
+          <script src="../assets/group.js" />
           <meta charSet="utf8" />
           <title>New Group</title>
         </head>
