@@ -20,15 +20,24 @@ Db.prototype.getUsers = function() {
 };
 
 Db.prototype.getUserById = function (userId) {
-  return this.db("users").where("id", userId);
+  if(userId)
+    return this.db("users").where("id", userId);
+  else
+    return null;
 };
 
 Db.prototype.getUserByName = function (userName) {
-  return this.db("users").where("name", userName);
+  if(userName)
+    return this.db("users").where("name", userName);
+  else
+    return null;
 }
 
 Db.prototype.getUserByMail = function (email) {
-  return this.db("users").where("email", email);
+  if(email)
+    return this.db("users").where("email", email);
+  else
+    return null;
 }
 
 Db.prototype.addUser = function (email ,userName, pwd) {
@@ -64,10 +73,25 @@ Db.prototype.addGroup = function (name, creator, manager) {
           );
 };
 
+Db.prototype.updateGroup = function (id, name, manager) {
+  return this.db("groups")
+              .where("id", id)
+              .update({"name": name,
+                        "manager": manager});
+};
+
+Db.prototype.deleteGroup = function (id) {
+  return (this.db("groups")
+              .where('id', id)
+              .del()
+          );
+};
+
 Db.prototype.getGroupMembers = function(id) {
-  return this.db("groupmembers")
-              .where("group", id)
-              .select("member");
+  return this.db.distinct('email')
+                .from('users')
+                .rightJoin('groupmembers', 'users.id', 'groupmembers.member')
+                .where("group", id);
 };
 
 Db.prototype.addGroupMember = function (group, member) {
@@ -79,6 +103,24 @@ Db.prototype.addGroupMember = function (group, member) {
           })
           );
 };
+
+Db.prototype.delGroupMember = function (group, member) {
+  return (this.db("groupmembers")
+              .where({
+                'group': group,
+                'member': member
+              })
+              .del()
+          );
+
+};
+
+Db.prototype.deleteGroupMembers = function (id) {
+  return (this.db("groupmembers")
+              .where('group', id)
+              .del()
+          );
+}
 
 Db.prototype.addProjectGuest = function (group, guest) {
   return (this.db("projectguests")
@@ -129,6 +171,7 @@ Db.prototype.getMemberGroups = function (userId) {
   return this.db.distinct('groups.id','name','creator','manager')
                 .from('groups')
                 .rightJoin('groupmembers', 'groups.id', 'groupmembers.group')
+                .having('manager', '<>' ,userId)
                 .where('member', userId);
 };
 

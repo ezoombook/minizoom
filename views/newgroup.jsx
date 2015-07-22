@@ -28,24 +28,20 @@ var ChooseManager = React.createClass({
     }
     return (
        <Input type='select' label='Select Manager' onChange={this.handleChange}>
-        <option value='0' disabled selected className="default-option"> -- Select A Member -- </option>
+        <option value='none' selected className="default-option"> -- No Manager -- </option>
           {rows}
       </Input>
     );
   }
 });
 
-var NewGroupPanel = React.createClass({
-  handleChange: function(newMember){
-    this.props.handleAddMembers(newMember);
-  },  
+var NewGroupPanel = React.createClass({ 
   render: function() {
     var members = this.props.members;
     var title = ( <h1>New Group</h1> );
     return (
       <Panel header={title}>
         <Input type='text' label='Group Name' placeholder='Name' value={this.props.name} onChange={this.props.handleNameChange} />
-        <SearchUser addedUsers={this.props.members} type='Add Members' users={this.props.users} onChange={this.handleChange} />
         <ChooseManager members={this.props.members} onChange={this.props.handleManager} />
         <Button className='loginbutton' onClick={this.props.handleClick}>Register</Button>
       </Panel>
@@ -58,6 +54,9 @@ var MembersPanel = React.createClass({
     console.log("CLICK"+event.target.value);
     this.props.onClick(event.target.value);
   }, 
+  handleChange: function(newMember){
+    this.props.handleAddMembers(newMember);
+  }, 
   render: function() {
     var members = this.props.members;
     var rows = [];
@@ -68,7 +67,9 @@ var MembersPanel = React.createClass({
               </OverlayTrigger>);
     }
     return ( 
-        <Panel header='Member-List' >
+        <Panel header='Members' >
+        <SearchUser addedUsers={this.props.members} type='Add Members' users={this.props.users} onChange={this.handleChange} />
+        <p>Member List</p>
             {rows}
         </Panel> );
   }  
@@ -129,8 +130,7 @@ var MainGrid = React.createClass({
       var data = {"name": name,
                   "creator": this.props.user.id,
                   "members": members,
-                  "manager": manager,
-                  "guests": guests};
+                  "manager": manager};
       xhr.send(JSON.stringify(data));
       xhr.onreadystatechange = function() {
         if (xhr.readyState==4 && xhr.status==200) {
@@ -149,11 +149,12 @@ var MainGrid = React.createClass({
             <Col md={4}><NewGroupPanel user={this.props.user} users={this.props.users} 
                           name={this.state.name} members={this.state.members}
                           manager={this.state.manager} 
-                          handleNameChange={this.handleNameChange}
-                          handleAddMembers={this.handleAddMembers}
+                          handleNameChange={this.handleNameChange}                          
                           handleManager={this.handleManager}
                           handleClick={this.handleClick} /></Col>
-            <Col md={4}><MembersPanel members={this.state.members} onClick={this.handleDelMembers} /></Col>
+            <Col md={4}><MembersPanel members={this.state.members} onClick={this.handleDelMembers}
+                          handleAddMembers={this.handleAddMembers} 
+                          users={this.props.users}  /></Col>
             <Col md={2}></Col>
           </Row>
         </Grid>
@@ -193,6 +194,7 @@ if (typeof window === 'object') {
     React.render(newgroup, document);
   }
 }
+//Can be used for the creation of a new project
 
   // handleAddGuests: function(newGuest) {
   //     var oldList = this.state.guests;

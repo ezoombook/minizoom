@@ -14,7 +14,8 @@ var SearchBar = React.createClass({
   },
   render: function() {
     return ( 
-      <Input type='text' label={this.props.type} placeholder='Search user name' value={this.props.filterText} onChange={this.handleChange} />
+      <Input type='text' label={this.props.type} placeholder='Search user name' 
+          value={this.props.filterText} onChange={this.handleChange} />
     );
   }
 });
@@ -30,8 +31,8 @@ var UserTable = React.createClass({
     var addedUsers = this.props.addedUsers;
     var filterText = this.props.filterText;
     return ( 
-      <Input type='select' onChange={this.handleChange}>
-          <option disabled selected> -- Select An User -- </option>
+      <Input type='select' value="default" onChange={this.handleChange}>
+          <option disabled value="default"> -- Select An User -- </option>
             { users.map(function(user) {
                 var added =  false;
                 for(var i=0; i<addedUsers.length; i++){

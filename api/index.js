@@ -9,7 +9,9 @@ module.exports = function(api) {
 	api.route('/profile')
 		.patch(profile.patch);
 	api.route('/groups')
-		.post(groups.post);
+		.post(groups.post)
+        .patch(groups.patch)
+        .delete(groups.delete);
 	api.route('/users/:userId')
 		.get(users.get);
 	api.route('authority/group/:groupId/:userId')
